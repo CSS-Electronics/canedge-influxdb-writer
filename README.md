@@ -2,7 +2,7 @@
 
 This project lets you DBC decode CAN data from your CANedge into physical values - and push the data into a time series database. From here, the data can be displayed via your own customized, open source Grafana dashboard.
 
-For the overall guide to setting up your dashboard, see the CANedge intro.
+For the step-by-step guide to setting up your dashboard, see the [CANedge intro](https://canlogger.csselectronics.com/canedge-getting-started/log-file-tools/browser-dashboards).
 
 ---
 
