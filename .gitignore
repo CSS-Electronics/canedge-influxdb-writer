@@ -1,5 +1,5 @@
 __pycache__
-j1939.dbc
+*.dbc
 inputs_test.py
 *.MF4
 *.whl
