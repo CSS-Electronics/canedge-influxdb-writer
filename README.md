@@ -1,8 +1,8 @@
 # Dashboard Writer - Push CAN Data to InfluxDB [BETA]
 
-This project lets you DBC decode CAN data from your CANedge into physical values - and push the data into a time series database. From here, the data can be displayed via your own customized, open source Grafana dashboard.
+This project lets you DBC decode CAN data from your CANedge into physical values - and push the data into an InfluxDB database. From here, the data can be displayed via your own customized, open source Grafana dashboard.
 
-For the step-by-step guide to setting up your dashboard, see the [CANedge intro](https://canlogger.csselectronics.com/canedge-getting-started/log-file-tools/browser-dashboards).
+For the full step-by-step guide to setting up your dashboard, see the [CANedge intro](https://canlogger.csselectronics.com/canedge-getting-started/log-file-tools/browser-dashboards).
 
 ---
 
@@ -26,11 +26,10 @@ To use the script, install dependencies via the `requirements.txt`:
 
 ### 1: Test script with sample data 
 
-1. Download the CANedge J1939 [sample data](https://canlogger.csselectronics.com/canedge-getting-started/log-file-tools/) and extract next to script
+1. Download the CANedge [sample data](https://canlogger.csselectronics.com/canedge-getting-started/log-file-tools/) and place the J1939 `LOG/` folder and DBC next to `main.py`
 2. In `inputs.py` add your InfluxDB details and run `main.py`
-3. Verify success by viewing the data in the InfluxDB explorer (for Jan 13, 2020)
 
-*Note: If you use a free InfluxDB Cloud user, the sample data will be removed after a period as it is >30 days old.*
+*Note: If you use a free InfluxDB Cloud user, the sample data will be removed after a period (as it is >30 days old).*
 
 ### 2: Modify script with your own details 
 1. Local data: Add your own data next to the scripts as per the SD structure:
@@ -47,4 +46,4 @@ To use the script, install dependencies via the `requirements.txt`:
 
 ---
 ## Deleting data from InfluxDB 
-If you need to delete data in InfluxDB that you e.g. uploaded as part of a test, you can use the `delete_influx(name)` function from `utils.py`. You can call this by parsing the name of the 'measurement' to delete (i.e. the device serial number).
+If you need to delete data in InfluxDB that you e.g. uploaded as part of a test, you can use the `delete_influx(name)` function from `utils.py`. Call it by parsing the name of the 'measurement' to delete (i.e. the device serial number).

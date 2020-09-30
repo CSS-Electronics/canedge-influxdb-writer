@@ -14,7 +14,7 @@ def write_influx(name, df):
 
     _write_client = client.write_api(
         write_options=WriteOptions(
-            batch_size=1000,
+            batch_size=5000,
             flush_interval=10_000,
             jitter_interval=2_000,
             retry_interval=5_000,
@@ -33,6 +33,9 @@ def write_influx(name, df):
 def delete_influx(name):
     """Helper function to delete a 'measurement' from InfluxDB
     """
+    from influxdb_client import InfluxDBClient, Point, WriteOptions
+    from influxdb_client.client.write_api import SYNCHRONOUS
+
     client = InfluxDBClient(
         url=inputs.influx_url, token=inputs.token, org=inputs.org_id, debug=False
     )
@@ -58,7 +61,10 @@ def setup_fs_s3():
     fs = s3fs.S3FileSystem(
         key=inputs.key,
         secret=inputs.secret,
-        client_kwargs={"endpoint_url": inputs.endpoint, "verify": inputs.cert,},
+        client_kwargs={
+            "endpoint_url": inputs.endpoint,
+            # "verify": inputs.cert, # uncomment this when using MinIO with TLS enabled
+        },
     )
 
     return fs

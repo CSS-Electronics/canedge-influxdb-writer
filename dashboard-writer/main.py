@@ -56,7 +56,7 @@ def process_data_and_write():
                 if inputs.res != "":
                     df_phys_signal = df_phys_signal.resample(inputs.res).pad().dropna()
 
-                print(df_phys_signal)
+                # print(df_phys_signal)
                 write_influx(device_id, df_phys_signal)
 
     return
