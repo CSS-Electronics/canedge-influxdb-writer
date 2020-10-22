@@ -25,7 +25,9 @@ def process_data_and_write():
     log_files = canedge_browser.get_log_files(
         fs, inputs.devices, start_date=start, stop_date=inputs.stop
     )
-    print(f"Found a total of {len(log_files)} log files")
+
+    log_count = len(log_files)
+    print(f"Found a total of {log_count} log files")
 
     for log_file in log_files:
         # open log file, get device_id and extract dataframe with raw CAN data
@@ -41,7 +43,10 @@ def process_data_and_write():
         if df_phys.empty:
             continue
 
-        print(f"\nExtracted a total of {len(df_phys)} decoded messages")
+        print(
+            "\n---------------",
+            f"\nDevice: {device_id} | Log file: {log_file.split(device_id)[-1]} [Extracted {len(df_phys)} decoded frames]\nPeriod: {df_phys.index.min()} - {df_phys.index.max()}\n",
+        )
 
         # group the data to enable a signal-by-signal loop
         df_phys_grouped = df_phys.groupby("Signal")["Physical Value"]
@@ -49,15 +54,18 @@ def process_data_and_write():
         # for each signal in your list, resample the data and write to InfluxDB
         for signal, group in df_phys_grouped:
             if signal in inputs.signals or len(inputs.signals) == 0:
-                df_phys_signal = group.to_frame().rename(
-                    columns={"Physical Value": signal}
-                )
+                df_signal = group.to_frame().rename(columns={"Physical Value": signal})
+                print(f"Signal: {signal} (mean: {round(df_signal[signal].mean(),2)})")
 
                 if inputs.res != "":
-                    df_phys_signal = df_phys_signal.resample(inputs.res).pad().dropna()
+                    cnt = len(df_signal)
+                    df_signal = df_signal.resample(inputs.res).pad().dropna()
+                    print(
+                        f"- Resampling to {inputs.res} ({cnt} --> {len(df_signal)} records)"
+                    )
 
-                # print(df_phys_signal)
-                write_influx(device_id, df_phys_signal)
+                # print(df_signal)
+                write_influx(device_id, df_signal)
 
     return
 
