@@ -26,7 +26,7 @@ To use the script, install dependencies via the `requirements.txt`:
 
 ### 1: Test script with sample data 
 
-1. Download the CANedge [sample data](https://canlogger.csselectronics.com/canedge-getting-started/log-file-tools/) and place the J1939 `LOG/` folder and DBC next to `main.py`
+1. Download the CANedge [sample data](https://canlogger.csselectronics.com/canedge-getting-started/log-file-tools/) and place the J1939 `LOG/` folder next to `main.py`
 2. In `inputs.py` add your InfluxDB details and run `main.py`
 
 *Note: If you use a free InfluxDB Cloud user, the sample data will be removed after a period (as it is >30 days old).*
@@ -46,4 +46,6 @@ To use the script, install dependencies via the `requirements.txt`:
 
 ---
 ## Deleting data from InfluxDB 
-If you need to delete data in InfluxDB that you e.g. uploaded as part of a test, you can use the `delete_influx(name)` function from `utils.py`. Call it by parsing the name of the 'measurement' to delete (i.e. the device serial number).
+If you need to delete data in InfluxDB that you e.g. uploaded as part of a test, you can use the `delete_influx(name)` function from `utils.py`. Call it by parsing the name of the 'measurement' to delete (i.e. the device serial number):
+
+``delete_influx("958D2219")``
