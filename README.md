@@ -25,9 +25,8 @@ To use the script, install dependencies via the `requirements.txt`:
 ## Deployment
 
 ### 1: Test script with sample data 
-
-1. Download the CANedge [sample data](https://canlogger.csselectronics.com/canedge-getting-started/log-file-tools/) and place the J1939 `LOG/` folder next to `main.py`
-2. In `inputs.py` add your InfluxDB details and run `main.py`
+1. Clone the script folder incl. the J1939 sample data and demo DBC
+2. In `inputs.py` add your InfluxDB details, then run `python main.py` via the command line
 
 *Note: If you use a free InfluxDB Cloud user, the sample data will be removed after a period (as it is >30 days old).*
 
