@@ -7,19 +7,18 @@ def write_influx(name, df):
     from influxdb_client import InfluxDBClient, Point, WriteOptions
     from influxdb_client.client.write_api import SYNCHRONOUS
 
-    # --------------------------------------
-    client = InfluxDBClient(
-        url=inputs.influx_url, token=inputs.token, org=inputs.org_id, debug=False
-    )
+    # check if credentials have been added
+    if inputs.influx_url == "influx_endpoint":
+        print("\nWARNING: Please add your InfluxDB credentials in inputs.py\n")
+        return
+
+    # initialize client and write to InfluxDB
+    client = InfluxDBClient(url=inputs.influx_url, token=inputs.token, org=inputs.org_id, debug=False)
 
     if client.health().status == "pass":
+
         _write_client = client.write_api(
-            write_options=WriteOptions(
-                batch_size=5000,
-                flush_interval=10_000,
-                jitter_interval=2_000,
-                retry_interval=5_000,
-            )
+            write_options=WriteOptions(batch_size=5000, flush_interval=10_000, jitter_interval=2_000, retry_interval=5_000,)
         )
 
         _write_client.write(
@@ -39,9 +38,7 @@ def delete_influx(name):
     from influxdb_client import InfluxDBClient, Point, WriteOptions
     from influxdb_client.client.write_api import SYNCHRONOUS
 
-    client = InfluxDBClient(
-        url=inputs.influx_url, token=inputs.token, org=inputs.org_id, debug=False
-    )
+    client = InfluxDBClient(url=inputs.influx_url, token=inputs.token, org=inputs.org_id, debug=False)
 
     if client.health().status == "pass":
         start = "1970-01-01T00:00:00Z"
@@ -49,16 +46,10 @@ def delete_influx(name):
 
         delete_api = client.delete_api()
         delete_api.delete(
-            start,
-            stop,
-            f'_measurement="{name}"',
-            bucket=inputs.influx_bucket,
-            org=inputs.org_id,
+            start, stop, f'_measurement="{name}"', bucket=inputs.influx_bucket, org=inputs.org_id,
         )
     else:
-        print(
-            "\nWARNING: Unable to connect to InfluxDB - please check your credentials\n\n"
-        )
+        print("\nWARNING: Unable to connect to InfluxDB - please check your credentials\n\n")
 
 
 def setup_fs_s3():
@@ -79,20 +70,26 @@ def setup_fs_s3():
 
 
 def setup_fs():
-    """Helper function to setup the local file system.
+    """Helper function to setup the file system.
     """
-    from fsspec.implementations.local import LocalFileSystem
     from pathlib import Path
+    import canedge_browser
 
-    fs = LocalFileSystem()
+    base_path = Path(__file__).parent
+
+    fs = canedge_browser.LocalFileSystem(base_path=base_path)
 
     return fs
 
 
-def load_last_run(f_path):
-    """Helper function for loading the date of last run (if not found, set it to 7 days ago)
+def load_last_run():
+    """Helper function for loading the date of last run (if not found, set to 7 days ago)
     """
     from datetime import datetime, timedelta, timezone
+    from pathlib import Path
+
+    # get the root folder path and specify path to the file with datetime
+    f_path = Path(__file__).parent / "last_run.txt"
 
     fmt = "%Y-%m-%d %H:%M:%S"
 
@@ -112,11 +109,22 @@ def load_last_run(f_path):
     return last_run.replace(tzinfo=timezone.utc)
 
 
-def set_last_run(f_path):
+def set_last_run():
     """Helper function for writing the last run date & time to local file
     """
     from datetime import datetime, timedelta, timezone
+    from pathlib import Path
+
+    # get the root folder path and specify path to the file with datetime
+    f_path = Path(__file__).parent / "last_run.txt"
 
     fmt = "%Y-%m-%d %H:%M:%S"
     with open(f_path, mode="w") as file:
         file.write(datetime.utcnow().strftime(fmt))
+
+
+def print_summary(device_id, log_file, df_phys):
+    print(
+        "\n---------------",
+        f"\nDevice: {device_id} | Log file: {log_file.split(device_id)[-1]} [Extracted {len(df_phys)} decoded frames]\nPeriod: {df_phys.index.min()} - {df_phys.index.max()}\n",
+    )
