@@ -8,17 +8,15 @@ influx_url = "influx_endpoint"
 org_id = "influx_org_id"
 
 # -----------------------------------------------
-# specify devices to process (from local folder or S3 bucket)
-devices = ["LOG/958D2219"]  # for S3 use ["<bucket_name>/<serial_no>"]
+# specify devices to process from local/S3. If local files, ensure they are organized as on your SD card
+devices = ["LOG/958D2219"]  # for S3 use ["bucket_name/serial_no"]
 
 # -----------------------------------------------
-# specify your DBC path
+# specify your DBC path and optionally a specific list of signals to include ([]: use all signals)
 dbc_path = "CSS-Electronics-SAE-J1939-DEMO.dbc"
-
-# optionally specify list of signal names to include (set to [] for all signals)
 signals = []
 
-# optionally modify resampling frequency (set to "" to disable resampling)
+# optionally modify resampling frequency ("": disable resampling)
 res = "1S"
 
 # -----------------------------------------------
@@ -27,7 +25,7 @@ use_s3 = False
 key = "s3_key"
 secret = "s3_secret"
 endpoint = "s3_endpoint"
-# cert = "path/to/cert.crt"  # if using MinIO with TLS, add path to cert here and update utils.py setup_fs_s3 to verify
+# cert = "path/to/cert.crt"  # if MinIO + TLS, add path to cert and update utils.py/setup_fs_s3 to verify
 
 
 # toggle whether to update the last execution datetime on each script execution

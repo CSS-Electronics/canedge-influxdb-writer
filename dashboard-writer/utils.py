@@ -15,21 +15,17 @@ def write_influx(name, df):
     # initialize client and write to InfluxDB
     client = InfluxDBClient(url=inputs.influx_url, token=inputs.token, org=inputs.org_id, debug=False)
 
-    if client.health().status == "pass":
+    _write_client = client.write_api(
+        write_options=WriteOptions(batch_size=5000, flush_interval=10_000, jitter_interval=2_000, retry_interval=5_000,)
+    )
 
-        _write_client = client.write_api(
-            write_options=WriteOptions(batch_size=5000, flush_interval=10_000, jitter_interval=2_000, retry_interval=5_000,)
-        )
+    _write_client.write(
+        inputs.influx_bucket, record=df, data_frame_measurement_name=name,
+    )
 
-        _write_client.write(
-            inputs.influx_bucket, record=df, data_frame_measurement_name=name,
-        )
-
-        print(f"- SUCCESS: {len(df.index)} records of {name} written to InfluxDB\n\n")
-        _write_client.__del__()
-        client.__del__()
-    else:
-        print("- WARNING: Unable to connect to InfluxDB - please check credentials\n\n")
+    print(f"- SUCCESS: {len(df.index)} records of {name} written to InfluxDB\n\n")
+    _write_client.__del__()
+    client.__del__()
 
 
 def delete_influx(name):
