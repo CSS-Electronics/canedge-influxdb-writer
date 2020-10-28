@@ -15,6 +15,13 @@ def write_influx(name, df):
     # initialize client and write to InfluxDB
     client = InfluxDBClient(url=inputs.influx_url, token=inputs.token, org=inputs.org_id, debug=False)
 
+    # check that InfluxDB bucket is available, then write data to InfluxDB
+    try:
+        test = client.query_api().query(f'from(bucket:"{inputs.influx_bucket}") |> range(start: -10s)')
+    except Exception as err:
+        print_influx_error(str(err))
+        return
+
     _write_client = client.write_api(
         write_options=WriteOptions(batch_size=5000, flush_interval=10_000, jitter_interval=2_000, retry_interval=5_000,)
     )
@@ -124,3 +131,18 @@ def print_summary(device_id, log_file, df_phys):
         "\n---------------",
         f"\nDevice: {device_id} | Log file: {log_file.split(device_id)[-1]} [Extracted {len(df_phys)} decoded frames]\nPeriod: {df_phys.index.min()} - {df_phys.index.max()}\n",
     )
+
+
+def print_influx_error(err):
+    warning = "- WARNING: Unable to write data to InfluxDB |"
+
+    if "CERTIFICATE_VERIFY_FAILED" in err:
+        print(f"{warning} check your influx_url ({inputs.influx_url})")
+    elif "organization name" in err:
+        print(f"{warning} check your org_id ({inputs.org_id})")
+    elif "unauthorized access" in err:
+        print(f"{warning} check your influx_url and token")
+    elif "could not find bucket" in err:
+        print(f"{warning} check your influx_bucket ({inputs.influx_bucket})")
+    else:
+        print(err)
