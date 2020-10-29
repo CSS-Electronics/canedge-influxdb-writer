@@ -43,16 +43,13 @@ def delete_influx(name):
 
     client = InfluxDBClient(url=inputs.influx_url, token=inputs.token, org=inputs.org_id, debug=False)
 
-    if client.health().status == "pass":
-        start = "1970-01-01T00:00:00Z"
-        stop = "2099-01-01T00:00:00Z"
+    start = "1970-01-01T00:00:00Z"
+    stop = "2099-01-01T00:00:00Z"
 
-        delete_api = client.delete_api()
-        delete_api.delete(
-            start, stop, f'_measurement="{name}"', bucket=inputs.influx_bucket, org=inputs.org_id,
-        )
-    else:
-        print("\nWARNING: Unable to connect to InfluxDB - please check your credentials\n\n")
+    delete_api = client.delete_api()
+    delete_api.delete(
+        start, stop, f'_measurement="{name}"', bucket=inputs.influx_bucket, org=inputs.org_id,
+    )
 
 
 def setup_fs_s3():
