@@ -1,5 +1,3 @@
-from datetime import datetime, timezone
-
 # -----------------------------------------------
 # specify your InfluxDB details
 influx_bucket = "influx_bucket_name"
@@ -9,28 +7,27 @@ org_id = "influx_org_id"
 
 # -----------------------------------------------
 # specify devices to process (from a local folder or S3 bucket)
-# If local, ensure files are organized as on SD (folder/device_id/session/split.MF4)
-devices = ["LOG/958D2219"]  # local: ["folder/device_id"] | S3: ["bucket/device_id"]
+# If local, ensure logs are organized correctly: folder/device_id/session/split.MF4
+# Syntax: Local: ["folder/device_id"] | S3: ["bucket/device_id"]
+devices = ["LOG/958D2219"]
+
 
 # -----------------------------------------------
-# specify DBC path and the list of signals to process ([]: process all signals)
-dbc_path = "CSS-Electronics-SAE-J1939-DEMO.dbc"
+# specify DBC paths and a list of signals to process ([]: include all signals)
+dbc_paths = ["CSS-Electronics-SAE-J1939-DEMO.dbc"]
 signals = []
 
-# optionally modify resampling frequency ("": disable resampling)
+# specify resampling frequency ("": no resampling)
 res = "1S"
 
 # -----------------------------------------------
-# specify your S3 details (if relevant)
-use_s3 = False
+# specify whether to load data from S3 (and add server details if relevant)
+s3 = True
 key = "s3_key"
 secret = "s3_secret"
 endpoint = "s3_endpoint"
-# cert = "path/to/cert.crt"  # if MinIO + TLS, add path to cert and update utils.py/setup_fs_s3 to verify
+# cert = "path/to/cert.crt"  # if MinIO + TLS, add path to cert and update utils.py/setup_fs to verify
 
-
+# -----------------------------------------------
 # toggle whether to update the last execution datetime on each script execution
-use_dynamic = False
-
-# set stop date to a point in the future to load all log files after start date
-stop = datetime(year=2099, month=1, day=1, tzinfo=timezone.utc)
+dynamic = False

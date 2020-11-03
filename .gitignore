@@ -1,4 +1,3 @@
 __pycache__
-inputs_test.py
 *.whl
-temp-variables.py
+lambda_handler.py
