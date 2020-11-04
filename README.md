@@ -38,10 +38,20 @@ To use the script, install dependencies via the `requirements.txt`:
 4. In `last_run.txt`, specify when you wish to load log files from (e.g. `2020-01-13 00:00:00`)
 5. Optionally modify the signal filters or resampling frequency
 
+---
 
-### 3: Enable dynamic start time
+## Automation 
+There are multiple ways to automate the script execution. 
+
+### 3A: Enable dynamic start time
+One approach is via periodic execution, triggered e.g. by Windows Task Scheduler. In this case, the 'dynamic' start time can be enabled, which will ensure the script only processes log files uploaded since the last script execution by updating the `last_run.txt` on each execution. 
+
+
 1. In `inputs.py` set `dynamic = True`
 2. Follow the CANedge Intro guide for setting up e.g. Windows Task Scheduler
+
+### 3B: Set up AWS Lambda function
+Antoher approach is to use event based triggers, e.g. via AWS Lambda functions. We provide a detailed description of setting up AWS Lambda functions in the `aws_lambda_example/` sub folder.  
 
 ---
 ## Other practical information
@@ -50,7 +60,7 @@ To use the script, install dependencies via the `requirements.txt`:
 By default, summary information is printed as part of the processing. You can parse `verbose=False` as an input argument in `list_log_files`, `SetupInflux` and `DataWriter` to avoid this.
 
 ### Delete data from InfluxDB
-If you need to delete data in InfluxDB that you e.g. uploaded as part of a test, you can use the `delete_influx(name)` function from the `SetupInflux` class. Call it by parsing the name of the 'measurement' to delete (i.e. the device serial number):
+If you need to delete data in InfluxDB that you e.g. uploaded as part of a test, you can use the `delete_influx(name)` function from the `SetupInflux` class. Call it by parsing the name of the 'measurement' to delete (i.e. the device ID):
 
 ``influx.delete_influx("958D2219")``
 
