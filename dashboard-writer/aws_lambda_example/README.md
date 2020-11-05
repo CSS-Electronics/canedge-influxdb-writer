@@ -2,7 +2,7 @@
 
 AWS Lambda functions are a smart way to auto-execute code on every log file upload.
 
-Below we describe how you can set up an AWS Lambda function to automatically run the dashboard-writer script every time a new log file is uploaded.
+Below we describe how you can set up an AWS Lambda function to automatically run the script when a new log file is uploaded.
 
 ---
 
@@ -12,6 +12,7 @@ This is an advanced topic and we recommend that you get the basics in place firs
 - Test that your InfluxDB/Grafana setup works with the sample data
 - Test that your setup works with your own data/server when manually running the script from your PC
 - Make sure your log file split size, `inputs.py` and InfluxDB account settings are setup as needed (see below)
+- Create a test bucket in the same region as your main bucket and use this for the initial setup
 
 ### Regarding dependencies
 The dashboard-writer script relies on a number of dependencies that need to be provided to the AWS Lambda function. To make this easy, we have pre-built 'layers' for the major AWS S3 regions. You can find the latest layer list in our Releases page. See below for details. By providing your AWS Lambda function with an 'ARN identifier' for a pre-built layer, you ensure that all relevant dependencies are in place. The ARN should match the region that your S3 bucket is setup in.
@@ -19,10 +20,7 @@ The dashboard-writer script relies on a number of dependencies that need to be p
 ### Regarding log file size and InfluxDB account type
 If you're initially testing your setup with a free InfluxDB Cloud starter account, keep in mind that there is a 'write restriction' of 5 MB per 5 minutes. This means that if you try to write e.g. 30 MB of data, it will take > 30 minutes. This exceeds the AWS Lambda max timeout. If you're using AWS Lambda, we recommend that you ensure your log file split size is 2-5 MB and that the data you extract is optimized (i.e. only push relevant signals at relevant resampled frequency). Depending on your use case, this will let you set up a basic PoC.
 
-For 'production setups', we recommend that you either self-host InfluxDB or use a paid InfluxDB Cloud if you intend to utilize AWS Lambda for automation.
-
-### Use a test bucket before you start
-Before you deploy the AWS Lambda function with your 'main bucket' we recommend to set up an empty test bucket for testing. You can then change the bucket you trigger based on once you're ready.
+For 'production setups', we recommend self-hosting InfluxDB or using a paid InfluxDB Cloud if you wish to use AWS Lambda function.
 
 ---
 
@@ -46,7 +44,7 @@ Before you deploy the AWS Lambda function with your 'main bucket' we recommend t
 16. Verify that the Lambda function is triggered within a minute and check from the log output that it processes the data
 17. Verify that data is written correctly to InfluxDB
 
-Once everything is tested, you can change the 'Trigger' S3 bucket to your main bucket. You should of course monitor that it works as intended over a period.
+Once tested, change the 'Trigger' S3 bucket to your main bucket and verify that it works as intended over a period.
 
 
 #### Lambda function test event data
