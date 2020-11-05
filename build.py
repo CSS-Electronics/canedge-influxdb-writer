@@ -58,4 +58,4 @@ for region_arn in region_arn_list:
 
 output_file.close()
 
-print(f"Completed writing {len(region_arn_list)} out of {len(regions)} to CSV {csv_name}")
+print(f"Completed writing {len(region_arn_list)} out of {len(regions)} to CSV {csv_path}")
