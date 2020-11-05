@@ -24,9 +24,6 @@ For 'production setups', we recommend that you either self-host InfluxDB or use 
 ### Use a test bucket before you start
 Before you deploy the AWS Lambda function with your 'main bucket' we recommend to set up an empty test bucket for testing. You can then change the bucket you trigger based on once you're ready.
 
-### Regarding AWS and Lambda costs
-We recommend tracking your AWS billing costs when working with Lambda functions to ensure everything is set up correctly. We do not take responsibility for incorrect implementations or unexpected costs related to implementation of the below. Note also that the below is intended as a 'getting started' guide - not a fully cost optimized setup.
-
 ---
 
 ## Deploy your AWS Lambda function
@@ -37,7 +34,7 @@ We recommend tracking your AWS billing costs when working with Lambda functions 
 4. Add a 'Trigger': Select S3, your test bucket, `All object create events` and suffix `.MF4`
 5. Create a zip containing `lambda_handler.py`, `utils.py` and `inputs.py` (ensure your inputs are updated)
 6. Upload the zip via the Lambda 'Actions' button and confirm that your code shows in the online code editor
-7. Find the pre-built layer ARN for your AWS S3 region in the `aws_lambda_layers.txt` file on our releases page
+7. Find the pre-built layer ARN for your AWS S3 region in the `lambda_layer_arns.csv` file
 8. In the 'Designer' tap, click Layers/Add a layer/Specify an ARN and parse your ARN
 9. Scroll to 'Basic settings' and set the 'Timeout' to `3 min` and memory to `1024 MB` (you can test/tweak these later)
 10. Save the script and click 'Deploy', then 'Test' (using the below test data) and verify that it succeeds
@@ -72,6 +69,7 @@ Once everything is tested, you can change the 'Trigger' S3 bucket to your main b
 }
 ```
 
+<!--
 ---
 
 ## Build custom ARN layer package
@@ -97,3 +95,9 @@ rmdir /S/Q python\lib\python3.7\site-packages\botocore
 zip -r dashboard-writer.zip python
 aws lambda publish-layer-version --region us-east-2 --layer-name my-layer --description "Dashboard Writer Script Dependencies" --zip-file "fileb://dashboard-writer.zip" --compatible-runtimes python3.7 > APN.txt
 ```
+-->
+
+---
+
+## Regarding AWS and Lambda costs
+We recommend tracking your AWS billing costs when working with Lambda functions to ensure everything is set up correctly. We do not take responsibility for incorrect implementations or unexpected costs related to implementation of the below. Note also that the below is intended as a 'getting started' guide - not a fully cost optimized setup.

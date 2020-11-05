@@ -66,3 +66,7 @@ If you need to delete data in InfluxDB that you e.g. uploaded as part of a test,
 
 ### Multiple channels
 If your log files contain data from two CAN channels, you may need to adjust the script in case you have duplicate signal names across both channels. For example, if you're extracting the signal `EngineSpeed` from both channels. 
+
+---
+## Regarding cloud data transfer costs 
+If your data is stored on e.g. an AWS S3 cloud server, processing the data may result in data transfer costs, e.g. if you're running the scripts on your own PC. In contrast, if the script is run on an AWS EC2 instance in the same region as your S3 bucket, there is no data transfer cost. CSS Electronics does not take responsibility for e.g. unexpected costs related to use of the API tools and we encourage you to monitor your costs during initial testing.
