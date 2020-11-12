@@ -16,10 +16,11 @@ For the full step-by-step guide to setting up your dashboard, see the [CANedge i
 ```
 ---
 
-## Requirements
-To use the script, install dependencies via the `requirements.txt`:
+## Installation
+We recommend to install Python 3.7 for Windows ([32 bit](https://www.python.org/ftp/python/3.7.9/python-3.7.9.exe)/[64 bit](https://www.python.org/ftp/python/3.7.9/python-3.7.9-amd64.exe)) or [Linux](https://www.python.org/downloads/release/python-379/).
 
-``pip install -r requirements.txt``
+Next, intall script dependencies via the `requirements.txt`:  
+  ``pip install -r requirements.txt``
 
 ---
 ## Deployment
