@@ -22,7 +22,7 @@ res = "1S"
 
 # -----------------------------------------------
 # specify whether to load data from S3 (and add server details if relevant)
-s3 = True
+s3 = False
 key = "s3_key"
 secret = "s3_secret"
 endpoint = "s3_endpoint"
