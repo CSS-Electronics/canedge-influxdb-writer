@@ -176,13 +176,14 @@ class SetupInflux:
 
 # -----------------------------------------------
 class DataWriter:
-    def __init__(self, fs, db_list, signals, res, db_func, verbose=True):
+    def __init__(self, fs, db_list, signals, res, db_func, days_offset=None, verbose=True):
 
         self.db_list = db_list
         self.signals = signals
         self.res = res
         self.fs = fs
         self.db_func = db_func
+        self.days_offset = days_offset
         self.verbose = verbose
         return
 
@@ -207,6 +208,14 @@ class DataWriter:
                 if df_phys.empty:
                     print("No signals were extracted")
                 else:
+                    # optionally re-baseline data timestamps to 'now - days_offset'
+                    if type(self.days_offset) == int:
+                        from datetime import datetime, timezone
+                        import pandas as pd
+
+                        delta_days = (datetime.now(timezone.utc) - df_phys.index.min()).days - self.days_offset
+                        df_phys.index = df_phys.index + pd.Timedelta(delta_days, "day")
+
                     self.print_log_summary(device_id, log_file, df_phys)
                     self.write_signals(device_id, df_phys)
 

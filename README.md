@@ -57,6 +57,9 @@ Antoher approach is to use event based triggers, e.g. via AWS Lambda functions. 
 ---
 ## Other practical information
 
+### Change timestamps 
+If you wish to test the script using old data, you can change the timestamps so that the data is 'rebaselined' to today, minus an offset number of days. This is useful e.g. if you want to use the InfluxDB Cloud Starter, which will delete data that is older than 30 days. To rebaseline your data to start today minus 2 days, simply add `days_offset=2` in the `DataWriter` initialization. 
+
 ### Change verbosity
 By default, summary information is printed as part of the processing. You can parse `verbose=False` as an input argument in `list_log_files`, `SetupInflux` and `DataWriter` to avoid this.
 
