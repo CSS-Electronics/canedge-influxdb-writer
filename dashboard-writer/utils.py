@@ -231,8 +231,8 @@ class DataWriter:
             if signal in self.signals or len(self.signals) == 0:
                 df_signal = group.to_frame().rename(columns={"Physical Value": signal})
 
+                cnt = len(df_signal)
                 if self.res != "":
-                    cnt = len(df_signal)
                     df_signal = df_signal.resample(self.res).pad().dropna()
 
                 self.print_signal_summary(signal, df_signal, cnt)
