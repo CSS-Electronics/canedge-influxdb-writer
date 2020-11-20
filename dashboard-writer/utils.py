@@ -5,14 +5,12 @@ def setup_fs(s3, key, secret, endpoint, cert=""):
     if s3:
         import s3fs
 
-        fs = s3fs.S3FileSystem(
-            key=key,
-            secret=secret,
-            client_kwargs={
-                "endpoint_url": endpoint,
-                # "verify": cert, # uncomment this when using MinIO with TLS enabled
-            },
-        )
+        if "amazonaws" in endpoint:
+            fs = s3fs.S3FileSystem(key=key, secret=secret)
+        elif cert != "":
+            fs = s3fs.S3FileSystem(key=key, secret=secret, client_kwargs={"endpoint_url": endpoint, "verify": cert})
+        else:
+            fs = s3fs.S3FileSystem(key=key, secret=secret, client_kwargs={"endpoint_url": endpoint},)
 
     else:
         from pathlib import Path

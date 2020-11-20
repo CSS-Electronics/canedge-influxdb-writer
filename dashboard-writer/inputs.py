@@ -25,7 +25,7 @@ res = "1S"
 s3 = False
 key = "s3_key"
 secret = "s3_secret"
-endpoint = "s3_endpoint"
+endpoint = "s3_endpoint"  # e.g. http://s3.us-east-1.amazonaws.com or http://192.168.0.1:9000
 # cert = "path/to/cert.crt"  # if MinIO + TLS, add path to cert and update utils.py/setup_fs to verify
 
 # -----------------------------------------------
