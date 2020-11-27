@@ -75,7 +75,7 @@ class SetupInflux:
     def get_start_times(self, devices, default_start, dynamic):
         """Get latest InfluxDB timestamps for devices for use as 'start times' for listing log files from S3
         """
-        from datetime import datetime
+        from datetime import datetime, timedelta
         from dateutil.tz import tzutc
 
         default_start_dt = datetime.strptime(default_start, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tzutc())
@@ -95,6 +95,7 @@ class SetupInflux:
                     last_time = default_start_dt
                 else:
                     last_time = influx_time[0].records[0]["_time"]
+                    last_time = last_time + timedelta(seconds=1)
 
                 start_times.append(last_time)
 
