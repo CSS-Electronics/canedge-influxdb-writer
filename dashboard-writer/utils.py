@@ -67,6 +67,7 @@ class SetupInflux:
         self.debug = debug
         self.verbose = verbose
         self.client = InfluxDBClient(url=self.influx_url, token=self.token, org=self.org_id, debug=False)
+        self.test = self.test_influx()
         return
 
     def __del__(self):
@@ -82,7 +83,7 @@ class SetupInflux:
         device_ids = [device.split("/")[1] for device in devices]
         start_times = []
 
-        if self.test_influx() == 0:
+        if self.test == 0:
             for device in device_ids:
                 start_times.append(default_start_dt)
         else:
@@ -106,7 +107,7 @@ class SetupInflux:
         """
         from influxdb_client import WriteOptions
 
-        if self.test_influx() == 0:
+        if self.test == 0:
             return
 
         _write_client = self.client.write_api(
