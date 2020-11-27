@@ -69,3 +69,7 @@ If you need to delete data in InfluxDB that you e.g. uploaded as part of a test,
 
 ### Multiple channels
 If your log files contain data from two CAN channels, you may need to adjust the script in case you have duplicate signal names across both channels. For example, if you're extracting the signal `EngineSpeed` from both channels. 
+
+---
+### Regarding InfluxDB and S3 usage costs
+Note that if you use the paid InfluxDB cloud and a paid S3 server, we recommend that you monitor usage during your tests early on to ensure that no unexpected cost developments occur.
