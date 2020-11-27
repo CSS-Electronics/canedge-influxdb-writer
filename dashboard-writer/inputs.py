@@ -29,5 +29,7 @@ endpoint = "s3_endpoint"  # e.g. http://s3.us-east-1.amazonaws.com or http://192
 # cert = "path/to/cert.crt"  # if MinIO + TLS, add path to cert and update utils.py/setup_fs to verify
 
 # -----------------------------------------------
-# toggle whether to update the last execution datetime on each script execution
-dynamic = False
+# if dynamic = True, data from S3 is loaded dynamically based on the last data found in InfluxDB
+# if dynamic = False (or no data is found in InfluxDB for a device), the default_start date is used
+dynamic = True
+default_start = "2020-01-01 00:00:00"

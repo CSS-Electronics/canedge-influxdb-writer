@@ -3,3 +3,4 @@ __pycache__
 python
 *.zip
 build.bat
+*inputs_test.py

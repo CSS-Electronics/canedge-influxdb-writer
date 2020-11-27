@@ -36,20 +36,19 @@ Next, intall script dependencies via the `requirements.txt`:
    `LOG/<device_ID>/<session>/<split>.MF4`
 2. S3 server: Add your S3 server details in `inputs.py` and set `s3 = True`
 3. In `inputs.py` update the DBC path list and the device list to match yours
-4. In `last_run.txt`, specify when you wish to load log files from (e.g. `2020-01-13 00:00:00`)
-5. Optionally modify the signal filters or resampling frequency
+4. Optionally modify the signal filters or resampling frequency
 
 ---
 
 ## Automation 
 There are multiple ways to automate the script execution. 
 
-### 3A: Enable dynamic start time
-One approach is via periodic execution, triggered e.g. by Windows Task Scheduler. In this case, the 'dynamic' start time can be enabled, which will ensure the script only processes log files uploaded since the last script execution by updating the `last_run.txt` on each execution. 
+### 3A: Use task scheduler
+One approach is via periodic execution, triggered e.g. by Windows Task Scheduler or Linux cron jobs. By default, the script is 'dynamic' meaning that it will only process log files that have not yet been added to the InfluxDB database. The script achieves this by fetching the 'most recent' timestamp (across signals) for each device in InfluxDB. The script will then only fetch log files that contain newer data vs. this timestamp. 
 
+If no timestamps are found in InfluxDB for a device, the `default_start` datetime will be used. Same goes if `dynamic = False` is used.
 
-1. In `inputs.py` set `dynamic = True`
-2. Follow the CANedge Intro guide for setting up e.g. Windows Task Scheduler
+For details on setting up task scheduler, see the CANedge Intro guide for browser dashboards.
 
 ### 3B: Set up AWS Lambda function
 Antoher approach is to use event based triggers, e.g. via AWS Lambda functions. We provide a detailed description of setting up AWS Lambda functions in the `aws_lambda_example/` sub folder.  
