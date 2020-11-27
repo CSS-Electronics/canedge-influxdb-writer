@@ -80,22 +80,23 @@ class SetupInflux:
 
         default_start_dt = datetime.strptime(default_start, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tzutc())
         device_ids = [device.split("/")[1] for device in devices]
-
-        self.test_influx()
-
         start_times = []
 
-        for device in device_ids:
-            influx_time = self.client.query_api().query(
-                f'from(bucket:"{self.influx_bucket}") |> range(start: 0, stop: now()) |> filter(fn: (r) => r["_measurement"] == "{device}") |> keep(columns: ["_time"]) |> sort(columns: ["_time"], desc: false) |> last(column: "_time")'
-            )
+        if self.test_influx() == 0:
+            for device in device_ids:
+                start_times.append(default_start_dt)
+        else:
+            for device in device_ids:
+                influx_time = self.client.query_api().query(
+                    f'from(bucket:"{self.influx_bucket}") |> range(start: 0, stop: now()) |> filter(fn: (r) => r["_measurement"] == "{device}") |> keep(columns: ["_time"]) |> sort(columns: ["_time"], desc: false) |> last(column: "_time")'
+                )
 
-            if len(influx_time) == 0 or dynamic == False:
-                last_time = default_start_dt
-            else:
-                last_time = influx_time[0].records[0]["_time"]
+                if len(influx_time) == 0 or dynamic == False:
+                    last_time = default_start_dt
+                else:
+                    last_time = influx_time[0].records[0]["_time"]
 
-            start_times.append(last_time)
+                start_times.append(last_time)
 
         return start_times
 
@@ -104,11 +105,8 @@ class SetupInflux:
         """
         from influxdb_client import WriteOptions
 
-        if self.influx_url == "influx_endpoint":
-            print("- WARNING: Please add your InfluxDB credentials\n")
+        if self.test_influx() == 0:
             return
-
-        self.test_influx()
 
         _write_client = self.client.write_api(
             write_options=WriteOptions(batch_size=5000, flush_interval=1_000, jitter_interval=2_000, retry_interval=5_000,)
@@ -135,11 +133,18 @@ class SetupInflux:
         )
 
     def test_influx(self):
-        try:
-            test = self.client.query_api().query(f'from(bucket:"{self.influx_bucket}") |> range(start: -10s)')
-        except Exception as err:
-            self.print_influx_error(str(err))
-            return
+        if self.influx_url == "influx_endpoint":
+            print("- WARNING: Please add your InfluxDB credentials\n")
+            result = 0
+        else:
+            try:
+                test = self.client.query_api().query(f'from(bucket:"{self.influx_bucket}") |> range(start: -10s)')
+                result = 1
+            except Exception as err:
+                self.print_influx_error(str(err))
+                result = 0
+
+        return result
 
     def print_influx_error(self, err):
         warning = "- WARNING: Unable to write data to InfluxDB |"

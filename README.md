@@ -46,7 +46,7 @@ There are multiple ways to automate the script execution.
 ### 3A: Use task scheduler
 One approach is via periodic execution, triggered e.g. by Windows Task Scheduler or Linux cron jobs. By default, the script is 'dynamic' meaning that it will only process log files that have not yet been added to the InfluxDB database. The script achieves this by fetching the 'most recent' timestamp (across signals) for each device in InfluxDB. The script will then only fetch log files that contain newer data vs. this timestamp. 
 
-If no timestamps are found in InfluxDB for a device, the `default_start` datetime will be used. Same goes if `dynamic = False` is used.
+If no timestamps are found in InfluxDB for a device, `default_start` is used. Same goes if `dynamic = False` is used.
 
 For details on setting up task scheduler, see the CANedge Intro guide for browser dashboards.
 
