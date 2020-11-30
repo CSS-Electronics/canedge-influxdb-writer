@@ -4,3 +4,5 @@ python
 *.zip
 build.bat
 *inputs_test.py
+*j1939-engine.dbc
+*j1939-speed.dbc

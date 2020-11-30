@@ -183,30 +183,35 @@ class DataWriter:
         :param log_files:   list of log file paths (e.g. as per output of canedge_browser)
         """
         import mdf_iter, can_decoder
+        import pandas as pd
 
-        for db in self.db_list:
-            for log_file in log_files:
-                with self.fs.open(log_file, "rb") as handle:
-                    mdf_file = mdf_iter.MdfFile(handle)
-                    device_id = self.get_device_id(mdf_file)
-                    df_raw = mdf_file.get_data_frame()
+        for log_file in log_files:
+            with self.fs.open(log_file, "rb") as handle:
+                mdf_file = mdf_iter.MdfFile(handle)
+                device_id = self.get_device_id(mdf_file)
+                df_raw = mdf_file.get_data_frame()
 
+            df_phys = pd.DataFrame()
+
+            for db in self.db_list:
                 df_decoder = can_decoder.DataFrameDecoder(db)
-                df_phys = df_decoder.decode_frame(df_raw)
+                df_phys = df_phys.append(df_decoder.decode_frame(df_raw))
 
-                if df_phys.empty:
-                    print("No signals were extracted")
-                else:
-                    # optionally re-baseline data timestamps to 'now - days_offset'
-                    if type(self.days_offset) == int:
-                        from datetime import datetime, timezone
-                        import pandas as pd
+            df_phys["datetime"] = df_phys.index
+            df_phys = df_phys.drop_duplicates(keep="first")
 
-                        delta_days = (datetime.now(timezone.utc) - df_phys.index.min()).days - self.days_offset
-                        df_phys.index = df_phys.index + pd.Timedelta(delta_days, "day")
+            if df_phys.empty:
+                print("No signals were extracted")
+            else:
+                # optionally re-baseline data timestamps to 'now - days_offset'
+                if type(self.days_offset) == int:
+                    from datetime import datetime, timezone
 
-                    self.print_log_summary(device_id, log_file, df_phys)
-                    self.write_signals(device_id, df_phys)
+                    delta_days = (datetime.now(timezone.utc) - df_phys.index.min()).days - self.days_offset
+                    df_phys.index = df_phys.index + pd.Timedelta(delta_days, "day")
+
+                self.print_log_summary(device_id, log_file, df_phys)
+                self.write_signals(device_id, df_phys)
 
     def write_signals(self, device_id, df_phys):
         """Given a device ID and a dataframe of physical values, optionally
