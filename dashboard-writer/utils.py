@@ -42,12 +42,26 @@ def list_log_files(fs, devices, start_times, verbose=True):
     """Given a list of device paths, list log files from specified filesystem.
     Data is loaded based on the list of start datetimes
     """
-    import canedge_browser
+    import canedge_browser, mdf_iter
 
     log_files = []
-    for idx, device in enumerate(devices):
-        start = start_times[idx]
-        log_files.extend(canedge_browser.get_log_files(fs, [device], start_date=start))
+
+    if len(start_times):
+        for idx, device in enumerate(devices):
+            start = start_times[idx]
+            log_files_device = canedge_browser.get_log_files(fs, [device], start_date=start)
+
+            # exclude the 1st log file if the last timestamp is before the start timestamp
+            if len(log_files_device) > 0:
+                with fs.open(log_files_device[0], "rb") as handle:
+                    mdf_file = mdf_iter.MdfFile(handle)
+                    df_raw = mdf_file.get_data_frame()
+                    end_time = df_raw.index[-1]
+
+                if end_time < start:
+                    log_files_device = log_files_device[1:]
+
+                log_files.extend(log_files_device)
 
     if verbose:
         print(f"Found {len(log_files)} log files\n")
@@ -84,8 +98,7 @@ class SetupInflux:
         start_times = []
 
         if self.test == 0:
-            for device in device_ids:
-                start_times.append(default_start_dt)
+            print("Warning: Unable to connect to InfluxDB")
         else:
             for device in device_ids:
                 influx_time = self.client.query_api().query(
@@ -96,7 +109,7 @@ class SetupInflux:
                     last_time = default_start_dt
                 else:
                     last_time = influx_time[0].records[0]["_time"]
-                    last_time = last_time + timedelta(seconds=1)
+                    last_time = last_time + timedelta(seconds=2)
 
                 start_times.append(last_time)
 
@@ -176,6 +189,25 @@ class DataWriter:
         self.verbose = verbose
         return
 
+    def extract_phys(self, df_raw):
+        """Given a dataframe of raw CAN data and a list of decoding databases,
+        this extracts the physical values for each database and creates a new
+        dataframe of unique physical values
+        """
+        import can_decoder
+        import pandas as pd
+
+        df_phys = pd.DataFrame()
+        for db in self.db_list:
+            df_decoder = can_decoder.DataFrameDecoder(db)
+            df_phys = df_phys.append(df_decoder.decode_frame(df_raw))
+
+        df_phys["datetime"] = df_phys.index
+        df_phys = df_phys.drop_duplicates(keep="first")
+        df_phys = df_phys.drop("datetime", 1)
+
+        return df_phys
+
     def decode_log_files(self, log_files):
         """Given a list of log files, load the raw data from the fs filesystem
         (e.g. local or S3) and convert it using a list of conversion rule databases.
@@ -191,14 +223,7 @@ class DataWriter:
                 device_id = self.get_device_id(mdf_file)
                 df_raw = mdf_file.get_data_frame()
 
-            df_phys = pd.DataFrame()
-
-            for db in self.db_list:
-                df_decoder = can_decoder.DataFrameDecoder(db)
-                df_phys = df_phys.append(df_decoder.decode_frame(df_raw))
-
-            df_phys["datetime"] = df_phys.index
-            df_phys = df_phys.drop_duplicates(keep="first")
+            df_phys = self.extract_phys(df_raw)
 
             if df_phys.empty:
                 print("No signals were extracted")

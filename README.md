@@ -37,6 +37,7 @@ Next, intall script dependencies via the `requirements.txt`:
 2. S3 server: Add your S3 server details in `inputs.py` and set `s3 = True`
 3. In `inputs.py` update the DBC path list and the device list to match yours
 4. Optionally modify the signal filters or resampling frequency
+5. On the 1st run, the script will process data starting from `default_start` (you may want to modify this)
 
 ---
 
@@ -46,7 +47,7 @@ There are multiple ways to automate the script execution.
 ### 3A: Use task scheduler
 One approach is via periodic execution, triggered e.g. by Windows Task Scheduler or Linux cron jobs. By default, the script is 'dynamic' meaning that it will only process log files that have not yet been added to the InfluxDB database. The script achieves this by fetching the 'most recent' timestamp (across signals) for each device in InfluxDB. The script will then only fetch log files that contain newer data vs. this timestamp. 
 
-If no timestamps are found in InfluxDB for a device, `default_start` is used. Same goes if `dynamic = False` is used.
+If no timestamps are found in InfluxDB for a device, `default_start` is used. Same goes if `dynamic = False` is used. If the script is e.g. temporarily unable to connect to InfluxDB, no log files will be listed for processing.
 
 For details on setting up task scheduler, see the CANedge Intro guide for browser dashboards.
 
@@ -69,6 +70,9 @@ If you need to delete data in InfluxDB that you e.g. uploaded as part of a test,
 
 ### Multiple channels
 If your log files contain data from two CAN channels, you may need to adjust the script in case you have duplicate signal names across both channels. For example, if you're extracting the signal `EngineSpeed` from both channels. 
+
+### Advanced processing (custom signals, multiframe decoding, ...)
+If you need to perform more advanced data processing, you may find useful functions and examples in the api-examples library under `data-processing/`. For example, if you need to include custom signals, you can implement code from those examples directly in the `utils.py` processing functions used in this repository. 
 
 ---
 ### Regarding InfluxDB and S3 usage costs
