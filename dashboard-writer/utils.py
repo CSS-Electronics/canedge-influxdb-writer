@@ -1,5 +1,7 @@
 def setup_fs(s3, key="", secret="", endpoint="", cert=""):
     """Given a boolean specifying whether to use local disk or S3, setup filesystem
+    Syntax examples: AWS (http://s3.us-east-2.amazonaws.com), MinIO (http://192.168.0.1:9000)
+    The cert input is relevant if you're using MinIO with TLS enabled, for specifying the path to the certficiate
     """
 
     if s3:
@@ -69,9 +71,48 @@ def list_log_files(fs, devices, start_times, verbose=True):
     return log_files
 
 
+def restructure_data(df_phys, res):
+    import pandas as pd
+
+    df_phys_join = pd.DataFrame({"TimeStamp": []})
+    if not df_phys.empty:
+        for signal, data in df_phys.groupby("Signal"):
+            df_phys_join = pd.merge_ordered(
+                df_phys_join,
+                data["Physical Value"].rename(signal).resample("1S").pad().dropna(),
+                on="TimeStamp",
+                fill_method="none",
+            ).set_index("TimeStamp")
+
+        df_phys_join.to_csv("output_joined.csv")
+
+    return df_phys_join
+
+
+def add_custom_sig(df_phys, signal1, signal2, function, new_signal):
+    """Helper function for calculating a new signal based on two signals and a function.
+    Returns a dataframe with the new signal name and physical values
+    """
+    import pandas as pd
+
+    try:
+        s1 = df_phys[df_phys["Signal"] == signal1]["Physical Value"].rename(signal1)
+        s2 = df_phys[df_phys["Signal"] == signal2]["Physical Value"].rename(signal2)
+
+        df_new_sig = pd.merge_ordered(s1, s2, on="TimeStamp", fill_method="ffill",).set_index("TimeStamp")
+        df_new_sig = df_new_sig.apply(lambda x: function(x[0], x[1]), axis=1).dropna().rename("Physical Value").to_frame()
+        df_new_sig["Signal"] = new_signal
+        df_phys = df_phys.append(df_new_sig)
+
+    except:
+        print(f"Warning: Custom signal {new_signal} not created\n")
+
+    return df_phys
+
+
 # -----------------------------------------------
 class ProcessData:
-    def __init__(self, fs, db_list, signals, days_offset=None, verbose=True):
+    def __init__(self, fs, db_list, signals=[], days_offset=None, verbose=True):
         self.db_list = db_list
         self.signals = signals
         self.fs = fs
