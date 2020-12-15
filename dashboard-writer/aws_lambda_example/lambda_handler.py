@@ -1,6 +1,7 @@
 import s3fs
-from utils import setup_fs, load_dbc_files, list_log_files, SetupInflux, DataWriter
-import inputs
+from utils import setup_fs, load_dbc_files, list_log_files, DataWriter
+from utils_db import SetupInflux
+import inputs as inp
 
 
 def lambda_handler(event, context=None):
@@ -9,13 +10,16 @@ def lambda_handler(event, context=None):
     log_files = [bucket + "/" + key]
 
     fs = s3fs.S3FileSystem(anon=False)
-    db_list = load_dbc_files(inputs.dbc_paths)
+    db_list = load_dbc_files(inp.dbc_paths)
 
     # initialize connection to InfluxDB
-    influx = SetupInflux(
-        influx_url=inputs.influx_url, token=inputs.token, org_id=inputs.org_id, influx_bucket=inputs.influx_bucket
-    )
+    influx = SetupInflux(inp.influx_url, inp.token, inp.org_id, inp.influx_bucket, inp.res)
 
     # process the log files and write extracted signals to InfluxDB
-    writer = DataWriter(fs=fs, db_list=db_list, signals=inputs.signals, res=inputs.res, db_func=influx.write_influx)
-    writer.decode_log_files(log_files)
+    proc = ProcessData(fs, db_list, inp.signals)
+
+    for log_file in log_files:
+        df_raw, device_id = proc.get_raw_data(log_file)
+        df_phys = proc.extract_phys(df_raw)
+        proc.print_log_summary(device_id, log_file, df_phys)
+        influx.write_signals(device_id, df_phys)

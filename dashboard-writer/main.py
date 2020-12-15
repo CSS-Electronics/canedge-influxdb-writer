@@ -1,15 +1,22 @@
-from utils import setup_fs, load_dbc_files, list_log_files, SetupInflux, DataWriter
-import inputs
+from utils import setup_fs, load_dbc_files, list_log_files, ProcessData
+from utils_db import SetupInflux
+import inputs as inp
 
-# initialize connection to InfluxDB
-influx = SetupInflux(influx_url=inputs.influx_url, token=inputs.token, org_id=inputs.org_id, influx_bucket=inputs.influx_bucket)
-start_times = influx.get_start_times(inputs.devices, inputs.default_start, inputs.dynamic)
+# initialize connection to InfluxDB + get latest data entries per device
+influx = SetupInflux(inp.influx_url, inp.token, inp.org_id, inp.influx_bucket, inp.res)
+start_times = influx.get_start_times(inp.devices, inp.default_start, inp.dynamic)
 
 # setup filesystem (local/S3), load DBC files and list log files for processing
-fs = setup_fs(inputs.s3, inputs.key, inputs.secret, inputs.endpoint)
-db_list = load_dbc_files(inputs.dbc_paths)
-log_files = list_log_files(fs, inputs.devices, start_times)
+fs = setup_fs(inp.s3, inp.key, inp.secret, inp.endpoint)
+db_list = load_dbc_files(inp.dbc_paths)
+log_files = list_log_files(fs, inp.devices, start_times)
 
-# # process the log files and write extracted signals to InfluxDB
-writer = DataWriter(fs=fs, db_list=db_list, signals=inputs.signals, res=inputs.res, db_func=influx.write_influx)
-writer.decode_log_files(log_files)
+# process log files and write extracted signals to InfluxDB
+proc = ProcessData(fs, db_list, inp.signals)
+
+for log_file in log_files:
+    df_raw, device_id = proc.get_raw_data(log_file)
+    df_phys = proc.extract_phys(df_raw)
+
+    proc.print_log_summary(device_id, log_file, df_phys)
+    influx.write_signals(device_id, df_phys)
