@@ -71,8 +71,21 @@ If you need to delete data in InfluxDB that you e.g. uploaded as part of a test,
 ### Multiple channels
 If your log files contain data from two CAN channels, you may need to adjust the script in case you have duplicate signal names across both channels. For example, if you're extracting the signal `EngineSpeed` from both channels. 
 
-### Advanced processing (custom signals, multiframe decoding, ...)
-If you need to perform more advanced data processing, you may find useful functions and examples in the api-examples library under `data-processing/`. For example, if you need to include custom signals, you can implement code from those examples directly in the `utils.py` processing functions used in this repository. 
+### Advanced processing (custom signals, transport protocol decoding, ...)
+If you need to perform more advanced data processing, you may find useful functions and examples in the api-examples library under `data-processing/`.
+
+For example, if you need to decode TP data, you can include the `utils_tp.py` in this repo and modify your `main.py` as below:
+
+```
+from utils_tp import MultiFrameDecoder
+...
+res_id_list_hex = ["0x7EC", "0x7BB"]
+tp_type = "uds"
+...
+tp = MultiFrameDecoder(df_raw, res_id_list_hex)
+df_raw = tp.combine_tp_frames_by_type(tp_type)
+...
+```
 
 ---
 ### Regarding InfluxDB and S3 usage costs
