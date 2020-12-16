@@ -84,6 +84,7 @@ tp_type = "uds"
 ...
 tp = MultiFrameDecoder(df_raw, res_id_list_hex)
 df_raw = tp.combine_tp_frames_by_type(tp_type)
+df_phys = proc.extract_phys(df_raw, tp_type=tp_type)
 ...
 ```
 
