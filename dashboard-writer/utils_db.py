@@ -104,7 +104,7 @@ class SetupInflux:
         )
 
     def test_influx(self):
-	    """Test the connection to your InfluxDB database
+        """Test the connection to your InfluxDB database
         """
         if self.influx_url == "influx_endpoint":
             result = 0

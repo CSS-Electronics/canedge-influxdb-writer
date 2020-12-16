@@ -36,13 +36,12 @@ For 'production setups', we recommend self-hosting InfluxDB or using a paid Infl
 8. In the 'Designer' tap, click Layers/Add a layer/Specify an ARN and parse your ARN
 9. Scroll to 'Basic settings' and set the 'Timeout' to `3 min` and memory to `1024 MB` (you can test/tweak these later)
 10. Save the script and click 'Deploy', then 'Test' (using the below test data) and verify that it succeeds
-11. Click 'Actions/Publish' and test that it works by
-12. Click 'Test' in the upper right corner and add the test JSON content below
-13. When you're ready, click 'Actions/Publish' to save a new version
-14. In AWS Services, go to Cloudwatch/Logs/Log groups and click your Lambda function to monitor events
-15. Download a logfile via CANcloud from your main bucket and upload to your test bucket via CANcloud (from the Home tab)
-16. Verify that the Lambda function is triggered within a minute and check from the log output that it processes the data
-17. Verify that data is written correctly to InfluxDB
+11. Click 'Test' in the upper right corner and add the test JSON content below
+12. When you're ready, click 'Actions/Publish' to save a new version
+13. In AWS Services, go to Cloudwatch/Logs/Log groups and click your Lambda function to monitor events
+14. Download a logfile via CANcloud from your main bucket and upload to your test bucket via CANcloud (from the Home tab)
+15. Verify that the Lambda function is triggered within a minute and check from the log output that it processes the data
+16. Verify that data is written correctly to InfluxDB
 
 Once tested, change the 'Trigger' S3 bucket to your main bucket and verify that it works as intended over a period.
 
