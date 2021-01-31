@@ -1,3 +1,5 @@
+# requires Docker to be running
+
 import os, json, sys
 import subprocess
 
@@ -40,12 +42,23 @@ if run_req_build:
 region_arn_list = []
 
 for region in regions:
+    # create the layers
     arn_output = subprocess.check_output(
         f'aws lambda publish-layer-version --region {region} --layer-name {layer_name} --description "{layer_description}" --cli-connect-timeout 6000 --license-info "MIT" --zip-file "fileb://dashboard-writer.zip" --compatible-runtimes python3.7',
         shell=True,
     ).decode("utf-8")
 
-    print(arn_output)
+    version = int(json.loads(arn_output)["Version"])
+
+    # make them public
+    make_public = subprocess.check_output(
+        f"aws lambda add-layer-version-permission --layer-name {layer_name} --version-number {version} --statement-id allAccountsExample --principal * --action lambda:GetLayerVersion --region {region}",
+        shell=True,
+    )
+
+    print("Build layer:", arn_output)
+
+    print("Make public:", make_public)
 
     arn = str(json.loads(arn_output)["LayerVersionArn"])
     region_arn = f"{region},{arn}\n"
