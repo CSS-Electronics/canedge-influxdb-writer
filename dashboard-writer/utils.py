@@ -158,6 +158,7 @@ class ProcessData:
         """
         if not df_phys.empty and type(self.days_offset) == int:
             from datetime import datetime, timezone
+            import pandas as pd
 
             delta_days = (datetime.now(timezone.utc) - df_phys.index.min()).days - self.days_offset
             df_phys.index = df_phys.index + pd.Timedelta(delta_days, "day")
