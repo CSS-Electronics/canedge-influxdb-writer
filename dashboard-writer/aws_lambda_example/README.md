@@ -26,7 +26,7 @@ For 'production setups', we recommend self-hosting InfluxDB or using a paid Infl
 
 ## Deploy your AWS Lambda function
 
-1. Create an [IAM execution](https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html) role with permissions: `AWSLambdaBasicExecutionRole` + `AmazonS3FullAccess`
+1. Create an [IAM execution](https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html) role with permissions: `AWSLambdaBasicExecutionRole` + `AmazonS3FullAccess` 
 2. Go to 'Services/Lambda', then select your S3 bucket region (upper right corner)
 3. Add a new Lambda function with a name, a Python 3.7 environment and your execution role
 4. Add a 'Trigger': Select S3, your test bucket, `All object create events` and suffix `.MF4`
@@ -65,6 +65,15 @@ Once tested, change the 'Trigger' S3 bucket to your main bucket and verify that 
   ]
 }
 ```
+
+
+#### Troubleshooting
+
+Typical issues that may arise include the following:
+1. If you do not create your IAM execution role with the correct policies, you'll get errors regarding forbidden access
+2. It's important that you zip the files outlined directly, rather than putting them in a folder and zipping the folder 
+3. Make sure to update the timeout - the script won't be able to run with the default 3 second timeout 
+
 
 <!--
 ---
