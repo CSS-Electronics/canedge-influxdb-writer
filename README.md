@@ -32,7 +32,7 @@ Next, enter the below and hit enter to install script dependencies:
 1. Download this repository incl. the J1939 data and demo DBC
 2. In `inputs.py` add your InfluxDB details, then run `python main.py` via the command line
 
-*Note: If you use a free InfluxDB Cloud user, the sample data will be removed after a period (as it is >30 days old). Note also that the sample data is recorded on January 
+*Note: If you use a free InfluxDB Cloud user, the sample data will be removed after a period (as it is >30 days old).*
 
 ### 2: Modify script with your own details
 1. Local disk: Add your own data next to the scripts as per the SD structure:
