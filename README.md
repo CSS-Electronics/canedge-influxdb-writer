@@ -8,7 +8,7 @@ For the full step-by-step guide to setting up your dashboard, see the [CANedge i
 
 ## Features
 ```
-- easily load MDF4 log files from local disk or S3 server
+- easily load MF4 log files from local disk or S3 server
 - fetch data from hardcoded time period - or automate with dynamic periods
 - DBC-decode data and optionally extract specific signals
 - optionally resample data to specific frequency
@@ -17,19 +17,22 @@ For the full step-by-step guide to setting up your dashboard, see the [CANedge i
 ---
 
 ## Installation
-We recommend to install Python 3.7 for Windows ([32 bit](https://www.python.org/ftp/python/3.7.9/python-3.7.9.exe)/[64 bit](https://www.python.org/ftp/python/3.7.9/python-3.7.9-amd64.exe)) or [Linux](https://www.python.org/downloads/release/python-379/).
+We recommend to install Python 3.7 for Windows ([32 bit](https://www.python.org/ftp/python/3.7.9/python-3.7.9.exe)/[64 bit](https://www.python.org/ftp/python/3.7.9/python-3.7.9-amd64.exe)) or [Linux](https://www.python.org/downloads/release/python-379/). Once installed, download and unzip the repository, then navigate to the folder with the `requirements.txt` file.
 
-Next, intall script dependencies via the `requirements.txt`:  
+In your explorer path, write `cmd` and hit enter to open your command prompt.
+
+Next, enter the below and hit enter to install script dependencies:
+  
   ``pip install -r requirements.txt``
 
 ---
-## Deployment
+## Test the script
 
 ### 1: Test script with sample data
 1. Download this repository incl. the J1939 data and demo DBC
 2. In `inputs.py` add your InfluxDB details, then run `python main.py` via the command line
 
-*Note: If you use a free InfluxDB Cloud user, the sample data will be removed after a period (as it is >30 days old).*
+*Note: If you use a free InfluxDB Cloud user, the sample data will be removed after a period (as it is >30 days old). Note also that the sample data is recorded on January 
 
 ### 2: Modify script with your own details
 1. Local disk: Add your own data next to the scripts as per the SD structure:
@@ -44,14 +47,14 @@ Next, intall script dependencies via the `requirements.txt`:
 ## Automation 
 There are multiple ways to automate the script execution. 
 
-### 3A: Use task scheduler
+### Use task scheduler
 One approach is via periodic execution, triggered e.g. by Windows Task Scheduler or Linux cron jobs. By default, the script is 'dynamic' meaning that it will only process log files that have not yet been added to the InfluxDB database. The script achieves this by fetching the 'most recent' timestamp (across signals) for each device in InfluxDB. The script will then only fetch log files that contain newer data vs. this timestamp. 
 
 If no timestamps are found in InfluxDB for a device, `default_start` is used. Same goes if `dynamic = False` is used. If the script is e.g. temporarily unable to connect to InfluxDB, no log files will be listed for processing.
 
 For details on setting up task scheduler, see the CANedge Intro guide for browser dashboards.
 
-### 3B: Set up AWS Lambda function
+### Set up AWS Lambda function
 Antoher approach is to use event based triggers, e.g. via AWS Lambda functions. We provide a detailed description of setting up AWS Lambda functions in the `aws_lambda_example/` sub folder.  
 
 ---
