@@ -24,6 +24,9 @@ In your explorer path, write `cmd` and hit enter to open your command prompt.
 Next, enter the below and hit enter to install script dependencies:
   
   ``pip install -r requirements.txt``
+ 
+**Tip:** Watch [this video walkthrough](https://canlogger1000.csselectronics.com/img/dashboard-writer-get-started.mp4) of the above.
+
 
 ---
 ## Test the script
