@@ -26,7 +26,7 @@ class SetupInflux:
         device_ids = [device.split("/")[1] for device in devices]
         start_times = []
 
-        if dynamic == False:
+        if dynamic == False or self.test == 0:
             for device in device_ids:
                 last_time = default_start_dt
                 start_times.append(last_time)
