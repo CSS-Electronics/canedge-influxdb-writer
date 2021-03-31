@@ -49,6 +49,21 @@ class SetupInflux:
 
         return start_times
 
+    def add_signal_tags(self, df_signal):
+        """Advanced: This can be used to add custom tags to the signals
+        based on a specific use case logic. In effect, this will
+        split the signal into multiple timeseries
+        """
+        tag_columns = ["my_tag"]
+
+        def event_test(row):
+            return "event" if row[0] > 1200 else "no event"
+
+        for tag in tag_columns:
+            df_signal[tag] = df_signal.apply(lambda row: event_test(row), axis=1)
+
+        return tag_columns, df_signal
+
     def write_signals(self, device_id, df_phys):
         """Given a device ID and a dataframe of physical values,
         resample and write each signal to a time series database
@@ -56,6 +71,8 @@ class SetupInflux:
         :param device_id:   ID of device (used as the 'measurement name')
         :param df_phys:     Dataframe of physical values (e.g. as per output of can_decoder)
         """
+        tag_columns = []
+
         if not df_phys.empty:
             for signal, group in df_phys.groupby("Signal")["Physical Value"]:
                 df_signal = group.to_frame().rename(columns={"Physical Value": signal})
@@ -68,9 +85,11 @@ class SetupInflux:
                         f"Signal: {signal} (mean: {round(df_signal[signal].mean(),2)} | records: {len(df_signal)} | resampling: {self.res})"
                     )
 
-                self.write_influx(device_id, df_signal)
+                # tag_columns, df_signal = self.add_signal_tags(df_signal)
 
-    def write_influx(self, name, df):
+                self.write_influx(device_id, df_signal, tag_columns)
+
+    def write_influx(self, name, df, tag_columns):
         """Helper function to write signal dataframes to InfluxDB
         """
         from influxdb_client import WriteOptions
@@ -83,9 +102,7 @@ class SetupInflux:
             write_options=WriteOptions(batch_size=5000, flush_interval=1_000, jitter_interval=2_000, retry_interval=5_000,)
         )
 
-        _write_client.write(
-            self.influx_bucket, record=df, data_frame_measurement_name=name,
-        )
+        _write_client.write(self.influx_bucket, record=df, data_frame_measurement_name=name, data_frame_tag_columns=tag_columns)
 
         if self.verbose:
             print(f"- SUCCESS: {len(df.index)} records of {name} written to InfluxDB\n\n")

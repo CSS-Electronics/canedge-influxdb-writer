@@ -94,6 +94,9 @@ df_phys = proc.extract_phys(df_raw, tp_type=tp_type)
 ...
 ```
 
+### Add InfluxDB tags 
+You can add tags to your data when using InfluxDB. This effectively adds additional dimensions to your data that you can e.g. use to color timeseries based on events or to further segment your queries when visualizing the data. The `utils_db.py` contains a basic example via the `add_signal_tags` functions that you can use as outset for building your own logic. 
+
 ---
 ### Regarding InfluxDB and S3 usage costs
 Note that if you use the paid InfluxDB cloud and a paid S3 server, we recommend that you monitor usage during your tests early on to ensure that no unexpected cost developments occur.
