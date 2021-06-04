@@ -94,6 +94,17 @@ df_phys = proc.extract_phys(df_raw, tp_type=tp_type)
 ...
 ```
 
+For the case of NMEA 2000 multiframe fast packets, you can utilize the below details:
+
+```
+from utils_tp import MultiFrameDecoder, nmea_fast_packet_pgns
+...
+res_id_list_hex = nmea_fast_packet_pgns
+tp_type = "nmea"
+
+```
+---
+
 ### Add InfluxDB tags 
 You can add tags to your data when using InfluxDB. This effectively adds additional dimensions to your data that you can e.g. use to color timeseries based on events or to further segment your queries when visualizing the data. The `utils_db.py` contains a basic example via the `add_signal_tags` functions that you can use as outset for building your own logic. 
 
