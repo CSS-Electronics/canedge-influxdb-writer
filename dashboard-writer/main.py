@@ -1,4 +1,4 @@
-from utils import setup_fs, load_dbc_files, list_log_files, ProcessData
+from utils import setup_fs, load_dbc_files, list_log_files, ProcessData, MultiFrameDecoder
 from utils_db import SetupInflux
 import inputs as inp
 

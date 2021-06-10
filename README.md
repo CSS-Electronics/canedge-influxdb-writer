@@ -80,29 +80,8 @@ If your log files contain data from two CAN channels, you may need to adjust the
 ### Advanced processing (custom signals, transport protocol decoding, ...)
 If you need to perform more advanced data processing, you may find useful functions and examples in the api-examples library under `data-processing/`.
 
-For example, if you need to decode TP data, you can include the `utils_tp.py` in this repo and modify your `main.py` as below:
+In particular, see the guide in that repository for including transport protocol handling for UDS, J1939 or NMEA 2000 fast packets. 
 
-```
-from utils_tp import MultiFrameDecoder
-...
-res_id_list_hex = ["0x7EC", "0x7BB"]
-tp_type = "uds"
-...
-tp = MultiFrameDecoder(df_raw, res_id_list_hex)
-df_raw = tp.combine_tp_frames_by_type(tp_type)
-df_phys = proc.extract_phys(df_raw, tp_type=tp_type)
-...
-```
-
-For the case of NMEA 2000 multiframe fast packets, you can utilize the below details:
-
-```
-from utils_tp import MultiFrameDecoder, nmea_fast_packet_pgns
-...
-res_id_list_hex = nmea_fast_packet_pgns
-tp_type = "nmea"
-
-```
 ---
 
 ### Add InfluxDB tags 
