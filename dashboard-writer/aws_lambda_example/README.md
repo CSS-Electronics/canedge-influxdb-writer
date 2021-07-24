@@ -89,7 +89,7 @@ If you need to create your own AWS Lambda layer, you can take outset in the step
 6. Open Docker and go to 'Settings/Resources/File Sharing', then add your new folder
 7. Copy the dashboard-writer `requirements.txt` file into your build folder
 8. In the build folder, create a `build.bat` file with below content (update the layer name and region)
-9. Open your command line in the folder and run `run.bat` - this will take a few minutes
+9. Open your command line in the folder and run `build.bat` - this will take a few minutes
 10. Once done, you can use the `LayerVersionArn` value from the `APN.txt` - e.g. as below:  
 `arn:aws:lambda:us-east-2:319723967016:layer:css-electronics-dashboard-writer:10`
 
@@ -101,6 +101,12 @@ rmdir /S/Q python\lib\python3.7\site-packages\botocore
 zip -r dashboard-writer.zip python
 aws lambda publish-layer-version --region us-east-2 --layer-name my-layer --description "Dashboard Writer Script Dependencies" --zip-file "fileb://dashboard-writer.zip" --compatible-runtimes python3.7 > APN.txt
 ```
+
+## Build multiple regions 
+1. Copy the file `build_layers.py` to the root of the repo 
+2. Run the file via `python build_layers.py` 
+3. If you've already built the zip file with dependencies, you can set this step to False in the code 
+
 -->
 
 ---
