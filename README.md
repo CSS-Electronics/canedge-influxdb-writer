@@ -63,6 +63,14 @@ Antoher approach is to use event based triggers, e.g. via AWS Lambda functions. 
 ---
 ## Other practical information
 
+### Regarding encrypted log files
+If you need to handle encrypted log files, you can provide a passwords dictionary object with similar structure as the `passwords.json` file used in the CANedge MF4 converters. The object can be provided e.g. as below (or via environmental variables):
+
+```
+pw = {"default": "password"} 			# hardcoded  
+pw = json.load(open("passwords.json"))	# from local JSON file 
+```
+
 ### Change timestamps 
 If you wish to test the script using old data, you can change the timestamps so that the data is 'rebaselined' to today, minus an offset number of days. This is useful e.g. if you want to use the InfluxDB Cloud Starter, which will delete data that is older than 30 days. To rebaseline your data to start today minus 2 days, simply add `days_offset=2` in the `ProcessData` initialization. 
 

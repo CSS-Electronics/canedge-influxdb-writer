@@ -11,6 +11,9 @@ org_id = "influx_org_id"
 # Syntax: Local: ["folder/device_id"] | S3: ["bucket/device_id"]
 devices = ["LOG/958D2219"]
 
+# if you're using data encryption, you can pass the password below
+pw = {"default": "password"}
+
 
 # -----------------------------------------------
 # specify DBC paths and a list of signals to process ([]: include all signals)
