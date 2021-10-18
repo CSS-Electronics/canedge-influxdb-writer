@@ -33,7 +33,7 @@ class SetupInflux:
         elif self.test != 0:
             for device in device_ids:
                 influx_time = self.client.query_api().query(
-                    f'from(bucket:"{self.influx_bucket}") |> range(start: 0, stop: now()) |> filter(fn: (r) => r["_measurement"] == "{device}") |> keep(columns: ["_time"]) |> sort(columns: ["_time"], desc: false) |> last(column: "_time")'
+                    f'from(bucket:"{self.influx_bucket}") |> range(start: -100d) |> filter(fn: (r) => r["_measurement"] == "{device}") |> group() |> last()'
                 )
 
                 if len(influx_time) == 0:
