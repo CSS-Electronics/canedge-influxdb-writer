@@ -1,10 +1,18 @@
-# Dashboard Writer - Push CAN Data to InfluxDB [BETA]
+# CANedge InfluxDB Writer - Push CAN Bus Data to InfluxDB
 
-This project lets you DBC decode CAN data from your CANedge into physical values - and push the data into an InfluxDB database. From here, the data can be displayed via your own customized, open source Grafana dashboard.
+This project lets you DBC decode CAN data from your CANedge - and push the data into an InfluxDB database. From here, the data can be displayed via your own customized, open source Grafana dashboard.
 
 For the full step-by-step guide to setting up your dashboard, see the [CANedge intro](https://canlogger.csselectronics.com/canedge-getting-started/log-file-tools/browser-dashboards).
 
----
+
+## Backend vs. Writer
+We provide two options for integrating your CANedge data with Grafana dashboards:
+
+The [CANedge Grafana Backend](https://github.com/CSS-Electronics/canedge-grafana-backend) app only processes data 'when needed' by an end user - and requires no database. It is ideal when you have large amounts of data - as you only process the data you need to visualize. 
+
+In contrast, the [CANedge InfluxDB Writer](https://github.com/CSS-Electronics/canedge-influxdb-writer) integration requires that you process relevant data in advance (e.g. periodically or on-file-upload) and write the decoded data to a database (e.g. InfluxDB). It is ideal if the dashboard loading speed is critical - but with the downside that large amounts of data is processed & stored (at a cost) without being used.
+
+----
 
 ## Features
 ```

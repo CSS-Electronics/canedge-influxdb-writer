@@ -15,7 +15,7 @@ This is an advanced topic and we recommend that you get the basics in place firs
 - Create a test bucket in the same region as your main bucket and use this for the initial setup
 
 ### Regarding dependencies
-The dashboard-writer script relies on a number of dependencies that need to be provided to the AWS Lambda function. To make this easy, we have pre-built 'layers' for the major AWS S3 regions. You can find the latest layer list in our Releases page. See below for details. By providing your AWS Lambda function with an 'ARN identifier' for a pre-built layer, you ensure that all relevant dependencies are in place. The ARN should match the region that your S3 bucket is setup in.
+The canedge-influxdb-writer script relies on a number of dependencies that need to be provided to the AWS Lambda function. To make this easy, we have pre-built 'layers' for the major AWS S3 regions. You can find the latest layer list in our Releases page. See below for details. By providing your AWS Lambda function with an 'ARN identifier' for a pre-built layer, you ensure that all relevant dependencies are in place. The ARN should match the region that your S3 bucket is setup in.
 
 ### Regarding log file size and InfluxDB account type
 If you're initially testing your setup with a free InfluxDB Cloud starter account, keep in mind that there is a 'write restriction' of 5 MB per 5 minutes. This means that if you try to write e.g. 30 MB of data, it will take > 30 minutes. This exceeds the AWS Lambda max timeout. If you're using AWS Lambda, we recommend that you ensure your log file split size is 2-5 MB and that the data you extract is optimized (i.e. only push relevant signals at relevant resampled frequency). Depending on your use case, this will let you set up a basic PoC.
@@ -87,19 +87,19 @@ If you need to create your own AWS Lambda layer, you can take outset in the step
 4. Install the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
 5. Open your command prompt and run `aws configure` and provide your credentials
 6. Open Docker and go to 'Settings/Resources/File Sharing', then add your new folder
-7. Copy the dashboard-writer `requirements.txt` file into your build folder
+7. Copy the canedge-influxdb-writer `requirements.txt` file into your build folder
 8. In the build folder, create a `build.bat` file with below content (update the layer name and region)
 9. Open your command line in the folder and run `build.bat` - this will take a few minutes
 10. Once done, you can use the `LayerVersionArn` value from the `APN.txt` - e.g. as below:  
-`arn:aws:lambda:us-east-2:319723967016:layer:css-electronics-dashboard-writer:10`
+`arn:aws:lambda:us-east-2:319723967016:layer:css-electronics-canedge-influxdb-writer:10`
 
 ```
 rmdir /S/Q python
 mkdir python\lib\python3.7\site-packages
 docker run -v "%cd%":/var/task "lambci/lambda:build-python3.7" /bin/sh -c "pip install -r requirements.txt -t python/lib/python3.7/site-packages/; exit"
 rmdir /S/Q python\lib\python3.7\site-packages\botocore
-zip -r dashboard-writer.zip python
-aws lambda publish-layer-version --region us-east-2 --layer-name my-layer --description "Dashboard Writer Script Dependencies" --zip-file "fileb://dashboard-writer.zip" --compatible-runtimes python3.7 > APN.txt
+zip -r canedge-influxdb-writer.zip python
+aws lambda publish-layer-version --region us-east-2 --layer-name my-layer --description "canedge-influxdb-writer Script Dependencies" --zip-file "fileb://canedge-influxdb-writer.zip" --compatible-runtimes python3.7 > APN.txt
 ```
 
 ## Build multiple regions 
