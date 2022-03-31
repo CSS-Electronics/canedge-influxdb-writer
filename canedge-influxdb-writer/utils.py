@@ -150,7 +150,7 @@ class ProcessData:
         # remove duplicates in case multiple DBC files contain identical signals
         df_phys["datetime"] = df_phys.index
         df_phys = df_phys.drop_duplicates(keep="first")
-        df_phys = df_phys.drop("datetime", 1)
+        df_phys = df_phys.drop(labels="datetime", axis=1)
 
         # optionally filter and rebaseline the data
         df_phys = self.filter_signals(df_phys)
