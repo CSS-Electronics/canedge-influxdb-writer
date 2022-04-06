@@ -1,0 +1,169 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 24,
+  "iteration": 1649183711982,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "aliasColors": {
+        "AccelerationY": "#3d85c6",
+        "AngularRateY": "semi-dark-blue"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "influxdb"
+      },
+      "description": "",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 16,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 2,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.4.5-56740",
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb"
+          },
+          "query": "from(bucket: v.defaultBucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)\r\n  |> filter(fn: (r) => r[\"_measurement\"] =~ /${DEVICE:regex}/)\r\n  |> filter(fn: (r) => r[\"_field\"]  =~ /${SIGNAL:regex}/)\r\n  |> yield(name: \"mean\")",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "${SIGNAL}",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 35,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": true
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\r\nschema.measurements(bucket: v.defaultBucket)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "DEVICE",
+        "multi": false,
+        "name": "DEVICE",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\r\nschema.measurements(bucket: v.defaultBucket)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\r\n\r\nschema.fieldKeys(bucket: v.defaultBucket)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "SIGNAL",
+        "multi": true,
+        "name": "SIGNAL",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\r\n\r\nschema.fieldKeys(bucket: v.defaultBucket)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-2d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "CANedge InfluxDB Writer - Simple",
+  "uid": "nCt68ey7z4",
+  "version": 2,
+  "weekStart": ""
+}
