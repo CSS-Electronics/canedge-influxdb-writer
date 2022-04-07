@@ -69,7 +69,7 @@ Note: To activate your virtual environment use `env\Scripts\activate` (Linux: `s
 
 ----
 
-### 3: Load your own data & DBC files 
+### 2: Load your own data & DBC files 
 
 #### Load from local disk 
 - Replace the sample `LOG/` folder with your own `LOG/` folder
@@ -94,20 +94,9 @@ Note: You may want to modify other variables like adding signal filters, changin
 
 ----
 
-### 4: Move to a production setup
+### 3: Automate & scale
 
-#### Automation 
-There are multiple ways to automate the script execution. 
-
-##### Use task scheduler
-One approach is via periodic execution, triggered e.g. by Windows Task Scheduler or Linux cron jobs. By default, the script is 'dynamic' meaning that it will only process log files that have not yet been added to the InfluxDB database. The script achieves this by fetching the 'most recent' timestamp (across signals) for each device in InfluxDB. The script will then only fetch log files that contain newer data vs. this timestamp. 
-
-If no timestamps are found in InfluxDB for a device, `default_start` is used. Same goes if `dynamic = False` is used. If the script is e.g. temporarily unable to connect to InfluxDB, no log files will be listed for processing.
-
-For details on setting up task scheduler, see the CANedge Intro guide for browser dashboards.
-
-#### Set up an AWS Lambda function
-Another approach is to use event based triggers, e.g. via AWS Lambda functions. We provide a detailed description of setting up AWS Lambda functions in the `aws_lambda_example/` folder. This is recommended if you're uploading data from multiple CANedge2 devices to an S3 server.
+Once you've verified that your data is uploaded correctly, you can move on to automating it. See the [CANedge intro](https://canlogger.csselectronics.com/canedge-getting-started/log-file-tools/browser-dashboards) for details.
 
 ----
 
@@ -116,14 +105,8 @@ Another approach is to use event based triggers, e.g. via AWS Lambda functions. 
 #### Delete data from InfluxDB
 If you need to delete data in InfluxDB that you e.g. uploaded as part of a test, you can use the `delete_influx(name)` function from the `SetupInflux` class. Call it by parsing the name of the 'measurement' to delete (i.e. the device ID): `influx.delete_influx("958D2219")`
 
-#### Multiple channels
-If your log files contain data from two CAN channels, you may need to adjust the script in case you have duplicate signal names across both channels. For example, if you're extracting the signal `EngineSpeed` from both channels. 
-
 #### Multi-frame data (ISO TP)
 You can easily process multi-frame data by setting the `tp_type` variable to `"j1939"`, `"uds"` or `"nmea"` and adding the relevant DBC file. For example, you can test this for the sample data by adding the DBC `"dbc_files/nissan_uds.dbc"` and setting `tp_type = "uds"`.
-
-#### Add InfluxDB tags 
-You can add tags to your data when using InfluxDB. This effectively adds additional dimensions to your data that you can e.g. use to color timeseries based on events or to further segment your queries when visualizing the data. The `utils_db.py` contains a basic example via the `add_signal_tags` functions that you can use as outset for building your own logic. 
 
 ----
 

@@ -28,6 +28,6 @@ for log_file in log_files:
         df_raw = tp.combine_tp_frames(df_raw)
 
     df_phys = proc.extract_phys(df_raw)
-
     proc.print_log_summary(device_id, log_file, df_phys)
+
     influx.write_signals(device_id, df_phys)
