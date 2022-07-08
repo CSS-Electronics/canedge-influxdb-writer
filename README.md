@@ -63,8 +63,7 @@ python -m venv env && source env/bin/activate && pip install -r requirements.txt
 python main.py
 ```
 
-if you found error message like this  
-"The command 'python' could not be found. Would you like to try this command"
+or
 
 ```
 python3 -m venv env && source env/bin/activate && pip install -r requirements.txt
