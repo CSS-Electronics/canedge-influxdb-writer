@@ -54,8 +54,8 @@ python main.py
 
 ##### Linux 
 ```
-python -m venv env && source env/bin/activate && pip install -r requirements.txt
-python main.py
+python3 -m venv env && source env/bin/activate && pip install -r requirements.txt
+python3 main.py
 ```
 
 #### Set up Grafana Cloud
