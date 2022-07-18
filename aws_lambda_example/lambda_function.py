@@ -13,7 +13,8 @@ def lambda_handler(event, context=None):
     db_list = load_dbc_files(inp.dbc_paths)
 
     # initialize connection to InfluxDB
-    influx = SetupInflux(inp.influx_url, inp.token, inp.org_id, inp.influx_bucket, inp.res)
+    influx = SetupInflux(inp.influx_url, inp.token,
+                         inp.org_id, inp.influx_bucket, inp.res)
 
     # process the log files and write extracted signals to InfluxDB
     proc = ProcessData(fs, db_list, inp.signals, inp.days_offset)
