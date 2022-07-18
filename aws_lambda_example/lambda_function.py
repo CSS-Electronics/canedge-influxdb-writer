@@ -9,7 +9,10 @@ def lambda_handler(event, context=None):
     key = event["Records"][0]["s3"]["object"]["key"]
     log_files = [bucket + "/" + key]
 
-    fs = s3fs.S3FileSystem(anon=False)
+    fs = s3fs.S3FileSystem(key=inp.key,
+                           secret=inp.secret,
+                           client_kwargs=dict(endpoint_url=inp.endpoint))
+
     db_list = load_dbc_files(inp.dbc_paths)
 
     # initialize connection to InfluxDB
