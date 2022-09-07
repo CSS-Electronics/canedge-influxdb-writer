@@ -1,1 +1,1 @@
-python main.py
+env\Scripts\activate & python main.py

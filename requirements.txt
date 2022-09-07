@@ -23,8 +23,8 @@ influxdb-client==1.27.0
 jmespath==0.10.0
 mdf-iter>=0.0.7
 multidict==6.0.2
-numpy==1.21.5
-pandas==1.2.4
+numpy==1.23.2
+pandas==1.4.3
 pathlib2==2.3.7.post1
 python-dateutil==2.8.2
 pytz==2022.1
