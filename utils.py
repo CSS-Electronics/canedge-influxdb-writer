@@ -78,6 +78,11 @@ def restructure_data(df_phys, res, full_col_names=False, pgn_names=False):
     from J1939_PGN import J1939_PGN
 
     df_phys_join = pd.DataFrame({"TimeStamp": []})
+
+    if res == "":
+        print("Warning: You must set a resampling frequency (e.g. 5S)")
+        return df_phys_join
+
     if not df_phys.empty:
         for message, df_phys_message in df_phys.groupby("CAN ID"):
             for signal, data in df_phys_message.groupby("Signal"):
@@ -95,7 +100,7 @@ def restructure_data(df_phys, res, full_col_names=False, pgn_names=False):
 
                 df_phys_join = pd.merge_ordered(
                     df_phys_join,
-                    data["Physical Value"].rename(col_name).resample(res).pad().dropna(),
+                    data["Physical Value"].rename(col_name).resample(res).ffill().dropna(),
                     on="TimeStamp",
                     fill_method="none",
                 ).set_index("TimeStamp")

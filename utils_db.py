@@ -72,19 +72,26 @@ class SetupInflux:
         """
         tag_columns = []
 
-        if not df_phys.empty:
-            for signal, group in df_phys.groupby("Signal")["Physical Value"]:
-                df_signal = group.to_frame().rename(columns={"Physical Value": signal})
+        if df_phys.empty:
+            print("Warning: Dataframe is empty, no data written")
+            return
+        else:
+            if self.res != "":
+                self.write_influx(device_id, df_phys, [])
 
-                if self.res != "":
-                    df_signal = df_signal.resample(self.res).ffill().dropna()
+            else:
+                for signal, group in df_phys.groupby("Signal")["Physical Value"]:
+                    df_signal = group.to_frame().rename(columns={"Physical Value": signal})
 
-                if self.verbose:
-                    print(f"Signal: {signal} (mean: {round(df_signal[signal].mean(),2)} | records: {len(df_signal)} | resampling: {self.res})")
+                    if self.res != "":
+                        df_signal = df_signal.resample(self.res).ffill().dropna()
 
-                # tag_columns, df_signal = self.add_signal_tags(df_signal)
+                    if self.verbose:
+                        print(f"Signal: {signal} (mean: {round(df_signal[signal].mean(),2)} | records: {len(df_signal)} | resampling: {self.res})")
 
-                self.write_influx(device_id, df_signal, tag_columns)
+                    # tag_columns, df_signal = self.add_signal_tags(df_signal)
+
+                    self.write_influx(device_id, df_signal, tag_columns)
 
     def write_influx(self, name, df, tag_columns):
         """Helper function to write signal dataframes to InfluxDB"""
@@ -94,16 +101,16 @@ class SetupInflux:
             print("Please check your InfluxDB credentials")
             return
 
-        _write_client = self.client.write_api(
-            write_options=WriteOptions(
-                batch_size=5000,
-                flush_interval=1_000,
-                jitter_interval=2_000,
-                retry_interval=5_000,
-            )
-        )
-
-        _write_client.write(self.influx_bucket, record=df, data_frame_measurement_name=name, data_frame_tag_columns=tag_columns)
+        with self.client.write_api(
+                write_options=WriteOptions(
+                    batch_size=20_000,
+                    flush_interval=1_000,
+                    jitter_interval=0,
+                    retry_interval=5_000,
+                )
+        ) as _write_client:
+            _write_client.write(self.influx_bucket, record=df, data_frame_measurement_name=name,
+                                data_frame_tag_columns=tag_columns)
 
         if self.verbose:
             print(f"- SUCCESS: {len(df.index)} records of {name} written to InfluxDB\n\n")

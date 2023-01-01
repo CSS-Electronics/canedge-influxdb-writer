@@ -14,7 +14,7 @@ devices = ["LOG/2F6913DB"]
 dbc_paths = ["dbc_files/canmod-gps.dbc"]
 signals = []
 
-# specify resampling frequency ("": no resampling)
+# specify resampling frequency. Setting this to "" means no resampling (much slower)
 res = "5S"
 
 # -----------------------------------------------
