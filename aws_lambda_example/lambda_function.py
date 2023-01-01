@@ -1,5 +1,5 @@
 import s3fs
-from utils import setup_fs, load_dbc_files, list_log_files, ProcessData, MultiFrameDecoder
+from utils import setup_fs, load_dbc_files, list_log_files, ProcessData, MultiFrameDecoder, restructure_data
 from utils_db import SetupInflux
 import inputs as inp
 
@@ -27,5 +27,7 @@ def lambda_handler(event, context=None):
 
         df_phys = proc.extract_phys(df_raw)
         proc.print_log_summary(device_id, log_file, df_phys)
+
+        df_phys = restructure_data(df_phys,inp.res)
 
         influx.write_signals(device_id, df_phys)

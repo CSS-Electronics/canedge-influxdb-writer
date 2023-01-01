@@ -72,18 +72,31 @@ def list_log_files(fs, devices, start_times, verbose=True, passwords={}):
 
     return log_files
 
-def restructure_data(df_phys, res, full_col_names=False, pgn_names=False):
+def add_signal_prefix(df_phys, can_id_prefix=False, pgn_prefix=False):
+    """Rename Signal names by prefixing the full
+    CAN ID (in hex) and/or J1939 PGN
+    """
+    from J1939_PGN import J1939_PGN
+
+    if can_id_prefix == True and pgn_prefix == False:
+        df_phys["Signal"] = df_phys["CAN ID"].apply(lambda x: f"{hex(int(x))[2:].upper()}") + "." + df_phys["Signal"]
+    elif can_id_prefix == True and pgn_prefix == True:
+        df_phys["Signal"] = df_phys["CAN ID"].apply(lambda x: f"{hex(int(x))[2:].upper()}.{J1939_PGN(int(x)).pgn}") + "." + df_phys["Signal"]
+    elif can_id_prefix == False and pgn_prefix == True:
+        df_phys["Signal"] = df_phys["CAN ID"].apply(lambda x: f"{J1939_PGN(int(x)).pgn}") + "." + df_phys["Signal"]
+
+    return df_phys
+
+def restructure_data(df_phys, res):
+    """Restructure the decoded data to a resampled
+    format where each column reflects a Signal
+    """
     import pandas as pd
 
-    df_phys_join = pd.DataFrame({"TimeStamp": []})
+    if not df_phys.empty and res != "":
+        df_phys = df_phys.pivot_table(values="Physical Value", index=pd.Grouper(freq=res), columns="Signal")
 
-    if res == "":
-        print("Warning: You must set a resampling frequency (e.g. 5S)")
-
-    if not df_phys.empty:
-        df_phys_join = df_phys.pivot_table(values="Physical Value", index=pd.Grouper(freq="S"), columns="Signal")
-
-    return df_phys_join
+    return df_phys
 
 
 def test_signal_threshold(df_phys, signal, threshold):
