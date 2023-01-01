@@ -72,38 +72,16 @@ def list_log_files(fs, devices, start_times, verbose=True, passwords={}):
 
     return log_files
 
-
 def restructure_data(df_phys, res, full_col_names=False, pgn_names=False):
     import pandas as pd
-    from J1939_PGN import J1939_PGN
 
     df_phys_join = pd.DataFrame({"TimeStamp": []})
 
     if res == "":
         print("Warning: You must set a resampling frequency (e.g. 5S)")
-        return df_phys_join
 
     if not df_phys.empty:
-        for message, df_phys_message in df_phys.groupby("CAN ID"):
-            for signal, data in df_phys_message.groupby("Signal"):
-
-                pgn = J1939_PGN(int(message)).pgn
-
-                if full_col_names == True and pgn_names == False:
-                    col_name = str(hex(int(message))).upper()[2:] + "." + signal
-                elif full_col_names == True and pgn_names == True:
-                    col_name = str(hex(int(message))).upper()[2:] + "." + str(pgn) + "." + signal
-                elif full_col_names == False and pgn_names == True:
-                    col_name = str(pgn) + "." + signal
-                else:
-                    col_name = signal
-
-                df_phys_join = pd.merge_ordered(
-                    df_phys_join,
-                    data["Physical Value"].rename(col_name).resample(res).ffill().dropna(),
-                    on="TimeStamp",
-                    fill_method="none",
-                ).set_index("TimeStamp")
+        df_phys_join = df_phys.pivot_table(values="Physical Value", index=pd.Grouper(freq="S"), columns="Signal")
 
     return df_phys_join
 
