@@ -9,3 +9,8 @@ build.bat
 *test_new.py
 *env/*
 *_test*
+*lambda_inputs_test.json*
+*deploy-aws-lambda/env/*
+*ev6-gps.dbc*
+
+*canedge-influxdb-writer.zip*

@@ -58,7 +58,7 @@ def list_log_files(fs, devices, start_times, verbose=True, passwords={}):
     """Given a list of device paths, list log files from specified filesystem.
     Data is loaded based on the list of start datetimes
     """
-    import canedge_browser, mdf_iter
+    import canedge_browser
 
     log_files = []
 
@@ -88,7 +88,7 @@ def add_signal_prefix(df_phys, can_id_prefix=False, pgn_prefix=False):
 
     return df_phys
 
-def restructure_data(df_phys, res):
+def restructure_data(df_phys, res, ffill=False):
     """Restructure the decoded data to a resampled
     format where each column reflects a Signal
     """
@@ -97,6 +97,9 @@ def restructure_data(df_phys, res):
     if not df_phys.empty and res != "":
         df_phys = df_phys.pivot_table(values="Physical Value", index=pd.Grouper(freq=res), columns="Signal")
 
+    if ffill:
+        df_phys = df_phys.ffill()
+        
     return df_phys
 
 
@@ -228,7 +231,7 @@ class ProcessData:
         return df_raw, device_id
 
     def get_device_id(self, mdf_file):
-        return mdf_file.get_metadata()["HDComment.Device Information.serial number"]["value_raw"]
+        return mdf_file.get_metadata()["HDcomment.Device Information.serial number"]["value_raw"]
 
     def print_log_summary(self, device_id, log_file, df_phys):
         """Print summary information for each log file"""

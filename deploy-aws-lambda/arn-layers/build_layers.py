@@ -1,17 +1,29 @@
 # requires Docker to be running
-
 import os, json, sys
 import subprocess
 
 # specify base details and region list
-layer_name = "css-canedge-influxdb-writer"
+layer_name = "canedge-influxdb-writer"
 layer_description = "CSS Electronics canedge-influxdb-writer script dependencies for use in AWS Lambda functions"
-csv_path = "canedge-influxdb-writer/aws_lambda_example/lambda_layer_arns.csv"
-run_req_build = True
+csv_path = "lambda_layer_arns.csv"
+run_req_build = False
+
+    # not working:
+    # "cn-north-1",
+    # "cn-northwest-1",
+    # "eu-central-2",
+    # "eu-south-1",
+    # "eu-south-2",
+    # "me-south-1",
+    # "me-central-1",
+    # "us-gov-east-1",
+    # "us-gov-west-1",
+    # "ap-east-1"
 
 regions = [
     "ap-northeast-1",
     "ap-northeast-2",
+    "ap-northeast-3",
     "ap-south-1",
     "ap-southeast-1",
     "ap-southeast-2",
@@ -31,24 +43,22 @@ regions = [
 # create zip with requirements.txt dependencies
 if run_req_build:
     os.system("rmdir /S/Q python")
-    os.system("mkdir python\lib\python3.7\site-packages")
+    os.system("mkdir python\lib\python3.9\site-packages")
     os.system(
-        'docker run -v "%cd%":/var/task "lambci/lambda:build-python3.7" /bin/sh -c "pip install -r requirements.txt -t python/lib/python3.7/site-packages/; exit"'
+        'docker run -v "%cd%":/var/task "public.ecr.aws/sam/build-python3.9" /bin/sh -c "pip install -r requirements.txt -t python/lib/python3.9/site-packages/; exit"'
     )
-    os.system("rmdir /S/Q python\\lib\\python3.7\\site-packages\\botocore")
+    os.system("rmdir /S/Q python\\lib\\python3.9\\site-packages\\botocore")
     os.system("zip -r canedge-influxdb-writer.zip python")
 
 # for each region, publish AWS layer with build zip
 region_arn_list = []
-
-print("we get here")
 
 for region in regions:
     print(f"executing region {region}")
 
     # create the layers
     arn_output = subprocess.check_output(
-        f'aws lambda publish-layer-version --region {region} --layer-name {layer_name} --description "{layer_description}" --cli-connect-timeout 6000 --license-info "MIT" --zip-file "fileb://canedge-influxdb-writer.zip" --compatible-runtimes python3.7',
+        f'aws lambda publish-layer-version --region {region} --layer-name {layer_name} --description "{layer_description}" --cli-connect-timeout 6000 --license-info "MIT" --zip-file "fileb://canedge-influxdb-writer.zip" --compatible-runtimes python3.9',
         shell=True,
     ).decode("utf-8")
 

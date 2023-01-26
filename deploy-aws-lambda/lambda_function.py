@@ -1,5 +1,5 @@
 import s3fs
-from utils import setup_fs, load_dbc_files, list_log_files, ProcessData, MultiFrameDecoder, restructure_data
+from utils import load_dbc_files, ProcessData, MultiFrameDecoder, restructure_data
 from utils_db import SetupInflux
 import inputs as inp
 

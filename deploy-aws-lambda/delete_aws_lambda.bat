@@ -1,0 +1,1 @@
+env\Scripts\activate & python delete_aws_lambda.py & pause

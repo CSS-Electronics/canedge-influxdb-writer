@@ -38,30 +38,43 @@ Note: We recommend to test the deployment with our sample data as the first step
 
 ### 1: Deploy the integration locally on your PC
 
-#### Install dependencies & write sample data to InfluxDB Cloud
+#### Install dependencies
 
-- Install Python 3.8.10 for Windows ([32 bit](https://www.python.org/ftp/python/3.8.10/python-3.8.10.exe)/[64 bit](https://www.python.org/ftp/python/3.8.10/python-3.8.10-amd64.exe)) or [Linux](https://www.python.org/downloads/release/python-3810/) (_enable 'Add to PATH'_)
+- Install Python 3.9.13 for Windows ([32 bit](https://www.python.org/ftp/python/3.9.13/python-3.9.13.exe)/[64 bit](https://www.python.org/ftp/python/3.9.13/python-3.9.13-amd64.exe)) or [Linux](https://www.python.org/downloads/release/python-3913/) (_enable 'Add to PATH'_)
 - Download this project as a zip via the green button and unzip it 
 - Open the folder with the `requirements.txt` file 
 - Open `inputs.py` with a text editor and add your InfluxDB Cloud details 
-- Open your [command prompt](https://www.youtube.com/watch?v=bgSSJQolR0E&t=47s) and enter below
+- Double click the `install.bat` (Windows) or open your [command prompt](https://www.youtube.com/watch?v=bgSSJQolR0E&t=47s) and enter below:
 
 ##### Windows 
 ```
 python -m venv env & env\Scripts\activate & pip install -r requirements.txt
-python main.py
 ```
 
 ##### Linux 
 ```
 python3 -m venv env && source env/bin/activate && pip install -r requirements.txt
-python3 main.py
+```
+
+#### Run script to write sample data to InfluxDB Cloud
+
+- Double-click `main.bat` (Windows) or open your command prompt and enter below:
+ 
+##### Windows 
+```
+env\Scripts\activate & python main.py
+```
+
+##### Linux 
+```
+env/bin/activate && python3 main.py
 ```
 
 #### Set up Grafana Cloud
 
 - In `Configuration/Plugins` install `TrackMap`
 - In `Dashboards/Browse` click `Import` and load the `dashboard-template-sample-data.json` from this repo 
+- Use the date/time browser to display the last 7 days
 
 You should now see the sample data visualized in Grafana. 
 
@@ -82,7 +95,7 @@ Note: To activate your virtual environment use `env\Scripts\activate` (Linux: `s
 #### Load from S3
 - Add your DBC file(s) to the `dbc_files` folder
 - Update `dbc_paths` in `inputs.py` to reflect your added log and DBC files
-- Update `devices` in `inputs.py` to reflect your S3 structure i.e. `["bucket/device_id"]`
+- Update `devices` in `inputs.py` to reflect your S3 structure i.e. `["your_bucket/device_id"]`
 - Set `days_offset = None` to ensure your data is written at the correct date
 - Update the S3 details in `inputs.py` with your S3 server and set `s3 = True` 
 
@@ -94,9 +107,11 @@ Note: You may want to modify other variables like adding signal filters, changin
 
 ----
 
-### 3: Automate & scale
+### 3: Automate & scale (e.g. via AWS Lambda)
 
 Once you've verified that your data is uploaded correctly, you can move on to automating it. See the [CANedge intro](https://canlogger.csselectronics.com/canedge-getting-started/log-file-tools/browser-dashboards) for details.
+
+We recommend to see the README in `deploy-aws-lambda/` of this repo for automation via AWS Lambda functions.
 
 ----
 

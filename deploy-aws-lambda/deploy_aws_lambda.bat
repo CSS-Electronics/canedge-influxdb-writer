@@ -1,0 +1,1 @@
+env\Scripts\activate & python deploy_aws_lambda.py & pause

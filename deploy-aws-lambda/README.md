@@ -4,27 +4,43 @@ AWS Lambda functions are a smart way to auto-execute code on every log file uplo
 
 Below we describe how you can set up an AWS Lambda function to automatically run the script when a new log file is uploaded.
 
----
+----
 
-## Before you get started
+## Before you deploy
 
 This is an advanced topic and we recommend that you get the basics in place first:
 - Test that your InfluxDB/Grafana setup works with the sample data
 - Test that your setup works with your own data/server when manually running the script from your PC
+- Ensure that the S3 credentials in your `inputs.py` provide admin rights to your AWS account
 - Make sure your log file split size, `inputs.py` and InfluxDB account settings are setup as needed (see below)
-- Create a test bucket in the same region as your main bucket and use this for the initial setup
 
-### Regarding dependencies
+----
+
+## Quick start deployment via Python [recommended]
+
+Deploy your Lambda function via the steps below (Windows):
+
+1. Double-click `install.bat`
+2. Double-click `deploy_aws_lambda.bat` 
+
+Next, test your Lambda function by uploading a log file to your S3 bucket (in the `device_id/session/split.MFX` structure).
+
+Note: You can use `delete_aws_lambda.bat` to remove the Lambda execution role, Lambda function and S3 event triggers. This is useful if you e.g. need to update your function.
+
+----
+
+### Dependencies, log file size and InfluxDB account type
 The canedge-influxdb-writer script relies on a number of dependencies that need to be provided to the AWS Lambda function. To make this easy, we have pre-built 'layers' for the major AWS S3 regions. You can find the latest layer list in our Releases page. See below for details. By providing your AWS Lambda function with an 'ARN identifier' for a pre-built layer, you ensure that all relevant dependencies are in place. The ARN should match the region that your S3 bucket is setup in.
 
-### Regarding log file size and InfluxDB account type
 If you're initially testing your setup with a free InfluxDB Cloud starter account, keep in mind that there is a 'write restriction' of 5 MB per 5 minutes. This means that if you try to write e.g. 30 MB of data, it will take > 30 minutes. This exceeds the AWS Lambda max timeout. If you're using AWS Lambda, we recommend that you ensure your log file split size is 2-5 MB and that the data you extract is optimized (i.e. only push relevant signals at relevant resampled frequency). Depending on your use case, this will let you set up a basic PoC.
 
-For 'production setups', we recommend self-hosting InfluxDB or using a paid InfluxDB Cloud if you wish to use AWS Lambda function.
+For 'production setups', we recommend using a paid InfluxDB Cloud or self-hosting InfluxDB if you wish to use AWS Lambda functions.
 
 ---
 
-## Deploy your AWS Lambda function
+## Manual deployment [not recommended]
+
+Below steps can be taken to manually deploy your lambda function via the AWS GUI. However, we strongly recommend the above batch script method to ensure correct installation.
 
 1. Create an [IAM execution](https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html) role (not user) with permissions: `AWSLambdaBasicExecutionRole` + `AmazonS3FullAccess` 
 2. Go to 'Services/Lambda', then select your S3 bucket region (upper right corner)
@@ -43,9 +59,6 @@ For 'production setups', we recommend self-hosting InfluxDB or using a paid Infl
 15. Download a logfile via CANcloud from your main bucket and upload to your test bucket via CANcloud (from the Home tab)
 16. Verify that the Lambda function is triggered within a minute and check from the log output that it processes the data
 17. Verify that data is written correctly to InfluxDB
-
-Once tested, change the 'Trigger' S3 bucket to your main bucket and verify that it works as intended over a period.
-
 
 #### Lambda function test event data
 
@@ -67,48 +80,6 @@ Once tested, change the 'Trigger' S3 bucket to your main bucket and verify that 
 }
 ```
 
-
-#### Troubleshooting
-
-Typical issues that may arise include the following:
-1. If you do not create your IAM execution role with the correct policies, you'll get errors regarding forbidden access
-2. It's important that you zip the files outlined directly, rather than putting them in a folder and zipping the folder 
-3. Make sure to update the timeout - the script won't be able to run with the default 3 second timeout 
-
-
-<!--
----
-
-## Build custom ARN layer package
-If you need to create your own AWS Lambda layer, you can take outset in the steps below (Windows):
-
-1. Add a new build folder for the build process, e.g. `aws-lambda-layer/`
-2. Install [Docker Desktop for Windows](https://hub.docker.com/editions/community/docker-ce-desktop-windows)
-3. Open your command prompt and run `docker pull lambci/lambda`
-4. Install the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
-5. Open your command prompt and run `aws configure` and provide your credentials
-6. Open Docker and go to 'Settings/Resources/File Sharing', then add your new folder
-7. Copy the canedge-influxdb-writer `requirements.txt` file into your build folder
-8. In the build folder, create a `build.bat` file with below content (update the layer name and region)
-9. Open your command line in the folder and run `build.bat` - this will take a few minutes
-10. Once done, you can use the `LayerVersionArn` value from the `APN.txt` - e.g. as below:  
-`arn:aws:lambda:us-east-2:319723967016:layer:css-electronics-canedge-influxdb-writer:10`
-
-```
-rmdir /S/Q python
-mkdir python\lib\python3.7\site-packages
-docker run -v "%cd%":/var/task "lambci/lambda:build-python3.7" /bin/sh -c "pip install -r requirements.txt -t python/lib/python3.7/site-packages/; exit"
-rmdir /S/Q python\lib\python3.7\site-packages\botocore
-zip -r canedge-influxdb-writer.zip python
-aws lambda publish-layer-version --region us-east-2 --layer-name my-layer --description "canedge-influxdb-writer Script Dependencies" --zip-file "fileb://canedge-influxdb-writer.zip" --compatible-runtimes python3.7 > APN.txt
-```
-
-## Build multiple regions 
-1. Copy the file `build_layers.py` to the root of the repo 
-2. Run the file via `python build_layers.py` 
-3. If you've already built the zip file with dependencies, you can set this step to False in the code 
-
--->
 
 ---
 
