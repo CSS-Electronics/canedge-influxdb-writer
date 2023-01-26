@@ -117,11 +117,17 @@ except iam.exceptions.NoSuchEntityException:
     # with open("trust_policy.json", "r") as f:
     #     trust_policy = f.read()
     iam.create_role(RoleName=LAMBDA_ROLE_NAME, AssumeRolePolicyDocument=trust_policy)
+    print(
+        f"--------------\nCreated new AWS lambda role {LAMBDA_ROLE_NAME} with ARN {LAMBDA_ROLE_ARN}"
+    )    
     print("Waiting 10 seconds ...")
     time.sleep(10)
     iam.attach_role_policy(
         RoleName=LAMBDA_ROLE_NAME,
         PolicyArn="arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+    )
+    print(
+        f"--------------\nAttached role policy AWSLambdaBasicExecutionRole"
     )
     print("Waiting 10 seconds ...")
     time.sleep(10)
@@ -129,11 +135,12 @@ except iam.exceptions.NoSuchEntityException:
         RoleName=LAMBDA_ROLE_NAME,
         PolicyArn="arn:aws:iam::aws:policy/AmazonS3FullAccess",
     )
+    print(
+        f"--------------\nAttached role policy AmazonS3FullAccess"
+    )
     print("Waiting 10 seconds ...")
     time.sleep(10)
-    print(
-        f"--------------\nCreated new AWS lambda role {LAMBDA_ROLE_NAME} with ARN {LAMBDA_ROLE_ARN}"
-    )
+  
     print("Waiting 10 seconds ...")
     time.sleep(10)
 
@@ -148,9 +155,7 @@ try:
         Code={"ZipFile": open(f"{LAMBDA_ZIP_FILE}.zip", "rb").read()},
         Timeout=180,
         MemorySize=1024,
-        Layers=[
-            "arn:aws:lambda:eu-central-1:319723967016:layer:css-dashboard-writer:8"
-        ],
+        Layers=[LAMBDA_ARN_LAYER],
     )
     print(
         f"--------------\nDeployed the AWS Lambda function {LAMBDA_FUNCTION_NAME} in region {REGION}"

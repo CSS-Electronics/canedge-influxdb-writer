@@ -3,10 +3,10 @@ import os, json, sys
 import subprocess
 
 # specify base details and region list
-layer_name = "canedge-influxdb-writer"
-layer_description = "CSS Electronics canedge-influxdb-writer script dependencies for use in AWS Lambda functions"
+layer_name = "canedge-influxdb-writer-2"
+layer_description = "CSS Electronics canedge-influxdb-writer dependencies for use in AWS Lambda functions"
 csv_path = "lambda_layer_arns.csv"
-run_req_build = False
+run_req_build = True
 
     # not working:
     # "cn-north-1",
@@ -68,7 +68,7 @@ for region in regions:
 
     # make them public
     make_public = subprocess.check_output(
-        f"aws lambda add-layer-version-permission --layer-name {layer_name} --version-number {version} --statement-id allAccountsExample --principal * --action lambda:GetLayerVersion --region {region}",
+        f"aws lambda add-layer-version-permission --layer-name {layer_name} --version-number {version} --statement-id allAccountsExample2 --principal * --action lambda:GetLayerVersion --region {region}",
         shell=True,
     )
 

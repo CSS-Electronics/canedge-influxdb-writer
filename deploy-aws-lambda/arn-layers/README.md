@@ -5,5 +5,7 @@
 4. Install the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
 5. Cofigure your AWS CLI via `aws configure`, providing your admin credentials and output type `json`
 6. In Docker go to 'Settings/Resources/File Sharing', then add your new folder
-3. Run the file via `python build_layers.py` 
-4. If you've already built the zip file with dependencies, you can set this step to False in the code 
+7. Run the file via `python build_layers.py` 
+8. If you've already built the zip file with dependencies, you can set this step to False in the code 
+
+Note: Some regions are not currently supported.
