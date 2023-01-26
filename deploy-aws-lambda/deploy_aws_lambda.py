@@ -10,7 +10,7 @@ import time
 from pathlib import Path
 parent = Path(__file__).resolve().parent.parent
 sys.path.append(str(parent))
-import inputs_test as inp
+import inputs as inp
 
 # Switch to working directory of the bat file
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -22,7 +22,7 @@ S3_BUCKET = inp.devices[0].split("/")[0]
 LAMBDA_ROLE_NAME = "canedge-influxdb-lambda-role"
 LAMBDA_FUNCTION_NAME = "canedge-influxdb-writer"
 
-PYTHON_BUILD = "python3.7"
+PYTHON_BUILD = "python3.9"
 LAMBDA_HANDLER = "lambda_function.lambda_handler"
 LAMBDA_ZIP_FILE = "lambda_function"
 files_to_archive = ["lambda_function.py", "../inputs.py", "../utils.py","../utils_db.py", "../dbc_files"]
@@ -117,14 +117,20 @@ except iam.exceptions.NoSuchEntityException:
     # with open("trust_policy.json", "r") as f:
     #     trust_policy = f.read()
     iam.create_role(RoleName=LAMBDA_ROLE_NAME, AssumeRolePolicyDocument=trust_policy)
+    print("Waiting 10 seconds ...")
+    time.sleep(10)
     iam.attach_role_policy(
         RoleName=LAMBDA_ROLE_NAME,
         PolicyArn="arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
     )
+    print("Waiting 10 seconds ...")
+    time.sleep(10)
     iam.attach_role_policy(
         RoleName=LAMBDA_ROLE_NAME,
         PolicyArn="arn:aws:iam::aws:policy/AmazonS3FullAccess",
     )
+    print("Waiting 10 seconds ...")
+    time.sleep(10)
     print(
         f"--------------\nCreated new AWS lambda role {LAMBDA_ROLE_NAME} with ARN {LAMBDA_ROLE_ARN}"
     )
