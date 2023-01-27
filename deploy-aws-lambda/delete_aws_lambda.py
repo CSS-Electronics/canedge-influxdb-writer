@@ -13,6 +13,14 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 # define initial variables
 AWS_ACCESS_KEY = inp.key
 AWS_SECRET_KEY = inp.secret
+
+try:
+    REGION = inp.endpoint.split(".")[1]
+except:
+    print(f"Unable to extract region from {inp.endpoint} - check if correct syntax is used ala http://s3.region.amazonaws.com")
+    print("Exiting script")
+    sys.exit()
+    
 S3_BUCKET = inp.devices[0].split("/")[0]
 
 LAMBDA_ROLE_NAME = "canedge-influxdb-lambda-role"
@@ -33,7 +41,7 @@ print(
 
 # Configure boto3 client
 session = boto3.Session(
-    aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_KEY
+    aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_KEY, region_name=REGION
 )
 
 # Get AWS S3 bucket region
@@ -103,3 +111,5 @@ try:
     print(f"--------------\nRemoved all event triggers from S3 bucket {S3_BUCKET}")
 except Exception as e:
     print(e)
+
+print("\nDeletion completed.")

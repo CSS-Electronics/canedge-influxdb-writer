@@ -18,6 +18,14 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 # define initial variables
 AWS_ACCESS_KEY = inp.key
 AWS_SECRET_KEY = inp.secret
+
+try:
+    REGION = inp.endpoint.split(".")[1]
+except:
+    print(f"Unable to extract region from {inp.endpoint} - check if correct syntax is used ala http://s3.region.amazonaws.com")
+    print("Exiting script")
+    sys.exit()
+    
 S3_BUCKET = inp.devices[0].split("/")[0]
 LAMBDA_ROLE_NAME = "canedge-influxdb-lambda-role"
 LAMBDA_FUNCTION_NAME = "canedge-influxdb-writer"
@@ -38,12 +46,12 @@ print(
 )
 print("- Ensure that the S3 credentials in your inputs.py have admin permissions")
 print(
-    "- If you have previously deployed a Lambda function, use the clear_lambda.py to remove it"
+    "- If you have previously deployed a Lambda function, use the deletion script to remove it"
 )
 
 # Configure boto3 client
 session = boto3.Session(
-    aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_KEY
+    aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_KEY, region_name=REGION
 )
 
 # Get AWS S3 bucket region
@@ -51,7 +59,7 @@ s3 = session.client("s3")
 
 try:
     response = s3.get_bucket_location(Bucket=S3_BUCKET)
-    REGION = response["LocationConstraint"]
+    REGION_BUCKET = response["LocationConstraint"]
 except Exception as e:
     print("\n")
     print(e)
@@ -60,6 +68,14 @@ except Exception as e:
     print("- Please check if the 1st entry in your 'devices' list correctly includes your S3 bucket name")
     print("- Exiting script")
     sys.exit()
+    
+if REGION_BUCKET != REGION:
+    print(f"WARNING: Bucket region is {REGION_BUCKET} and differs from session region {REGION} - please review.")
+    print("- Exiting script")
+
+    sys.exit()
+    
+
 
 # Get AWS account ID
 sts = session.client("sts")
@@ -67,7 +83,7 @@ response = sts.get_caller_identity()
 AWS_ACCOUNT_ID = response["Account"]
 
 print(
-    f"--------------\nConfigured AWS boto3 client and extracted S3 bucket region {REGION} and account ID {AWS_ACCOUNT_ID}"
+    f"--------------\nConfigured AWS boto3 client and account ID {AWS_ACCOUNT_ID}"
 )
 
 temp_dir = tempfile.mkdtemp()
@@ -138,11 +154,8 @@ except iam.exceptions.NoSuchEntityException:
     print(
         f"--------------\nAttached role policy AmazonS3FullAccess"
     )
-    print("Waiting 10 seconds ...")
-    time.sleep(10)
-  
-    print("Waiting 10 seconds ...")
-    time.sleep(10)
+    print("Waiting 20 seconds ...")
+    time.sleep(20)
 
 # Create the lambda function if it does not already exist
 lambda_client = session.client("lambda")
