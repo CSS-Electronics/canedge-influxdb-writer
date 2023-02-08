@@ -339,7 +339,8 @@ class MultiFrameDecoder:
         if self.tp_type == "j1939":
             df_raw_pgns = df_raw["ID"].apply(self.calculate_pgn)
             df_raw_match = df_raw_pgns.isin(res_id_list_full)
-            res_id_list = res_id_list_full.remove(bam_pgn)
+            res_id_list = res_id_list_full.copy() 
+            res_id_list.remove(bam_pgn)
             if type(res_id_list) is not list:
                 res_id_list = [res_id_list]
         elif self.tp_type == "uds":
