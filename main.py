@@ -4,7 +4,8 @@ from utils import (
     list_log_files,
     ProcessData,
     MultiFrameDecoder,
-    restructure_data
+    restructure_data,
+    add_signal_prefix
 )
 from utils_db import SetupInflux
 import inputs as inp
@@ -30,6 +31,8 @@ for log_file in log_files:
 
     df_phys = proc.extract_phys(df_raw)
     proc.print_log_summary(device_id, log_file, df_phys)
+    
+    df_phys = add_signal_prefix(df_phys, can_id_prefix=inp.can_id_prefix, pgn_prefix=inp.pgn_prefix, bus_prefix=inp.bus_prefix)
 
     df_phys = restructure_data(df_phys,inp.res)
     influx.write_signals(device_id, df_phys)

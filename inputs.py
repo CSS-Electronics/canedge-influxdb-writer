@@ -11,8 +11,12 @@ devices = ["LOG/2F6913DB"]
 
 # -----------------------------------------------
 # specify DBC paths and a list of signals to process ([]: include all signals)
+# optionally include signal prefixes to make CAN ID, PGN and/or BusChannel explicit
 dbc_paths = ["dbc_files/canmod-gps.dbc"]
 signals = []
+can_id_prefix = False
+pgn_prefix = False
+bus_prefix = False
 
 # specify resampling frequency. Setting this to "" means no resampling (much slower)
 res = "5S"
