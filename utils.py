@@ -79,17 +79,20 @@ def add_signal_prefix(df_phys, can_id_prefix=False, pgn_prefix=False, bus_prefix
     """
     from J1939_PGN import J1939_PGN
     
-    prefix = ""
-    if bus_prefix:
-        prefix += df_phys["BusChannel"].apply(lambda x: f"{x}.")
-    if can_id_prefix:
-        prefix += df_phys["CAN ID"].apply(lambda x: f"{hex(int(x))[2:].upper()}." )
-    if pgn_prefix:
-        prefix += df_phys["CAN ID"].apply(lambda x: f"{J1939_PGN(int(x)).pgn}.")
+    if df_phys.empty:
+        return df_phys 
+    else:
+        prefix = ""
+        if bus_prefix:
+            prefix += df_phys["BusChannel"].apply(lambda x: f"{x}.")
+        if can_id_prefix:
+            prefix += df_phys["CAN ID"].apply(lambda x: f"{hex(int(x))[2:].upper()}." )
+        if pgn_prefix:
+            prefix += df_phys["CAN ID"].apply(lambda x: f"{J1939_PGN(int(x)).pgn}.")
+            
+        df_phys["Signal"] = prefix + df_phys["Signal"]
         
-    df_phys["Signal"] = prefix + df_phys["Signal"]
-    
-    return df_phys
+        return df_phys
 
 def restructure_data(df_phys, res, ffill=False):
     """Restructure the decoded data to a resampled
