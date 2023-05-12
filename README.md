@@ -90,7 +90,10 @@ Note: To activate your virtual environment use `env\Scripts\activate` (Linux: `s
 - Add your DBC file(s) to the `dbc_files` folder
 - Update `devices` and `dbc_paths` in `inputs.py` to reflect your added log and DBC files
 - Set `days_offset = None` to ensure your data is written at the correct date
-- Verify that your venv is active and run the script via `python main.py` 
+- Run the script via the `main.bat`
+
+Note: If you're using the free InfluxDB Cloud, there is a limit of 200 unique signals per device - make sure to add a filtered list of signals `inputs.py` or modify your DBC file to contain less than the limit.
+
 
 #### Load from S3
 - Add your DBC file(s) to the `dbc_files` folder
@@ -98,8 +101,10 @@ Note: To activate your virtual environment use `env\Scripts\activate` (Linux: `s
 - Update `devices` in `inputs.py` to reflect your S3 structure i.e. `["your_bucket/device_id"]`
 - Set `days_offset = None` to ensure your data is written at the correct date
 - Update the S3 details in `inputs.py` with your S3 server and set `s3 = True` 
+- Run the script via the `main.bat`
 
 Note: You may want to modify other variables like adding signal filters, changing the resampling or modifying the default start date.
+
 
 #### Import simplified dashboard template 
 - To get started, import the `dashboard-template-simple.json` to visualize your own data
