@@ -83,8 +83,8 @@ class SetupInflux:
                 for signal, group in df_phys.groupby("Signal")["Physical Value"]:
                     df_signal = group.to_frame().rename(columns={"Physical Value": signal})
 
-                    if self.res != "":
-                        df_signal = df_signal.resample(self.res).ffill().dropna()
+                    # if self.res != "":
+                    #     df_signal = df_signal.resample(self.res).ffill().dropna()
 
                     if self.verbose:
                         print(f"Signal: {signal} (mean: {round(df_signal[signal].mean(),2)} | records: {len(df_signal)} | resampling: {self.res})")

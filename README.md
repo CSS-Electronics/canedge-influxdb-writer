@@ -107,7 +107,8 @@ Note: You may want to modify other variables like adding signal filters, changin
 
 
 #### Import simplified dashboard template 
-- To get started, import the `dashboard-template-simple.json` to visualize your own data
+- In `Dashboards/Browse` click `Import` and load the `dashboard-template-simple.json` from this repo 
+- Select a time period and signal with data to verify that your own data displays as expected
 - After this, you can optionally start customizing your panels as explained in the CANedge Intro
 
 ----
