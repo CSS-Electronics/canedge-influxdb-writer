@@ -2,7 +2,7 @@
 
 This project lets you DBC decode CAN data from your [CANedge](https://www.csselectronics.com/pages/can-bus-hardware-products) CAN/LIN data logger - and push the data into an InfluxDB database. From here, the data can be visualized in your own customized, open source Grafana dashboards.
 
-For the full step-by-step guide to setting up your dashboard, see the [CANedge intro](https://canlogger.csselectronics.com/canedge-getting-started/log-file-tools/browser-dashboards).
+For the full step-by-step guide to setting up your dashboard, see the [CANedge intro](https://canlogger.csselectronics.com/canedge-getting-started/ce2/log-file-tools/browser-dashboards).
 
 ![CAN Bus Grafana InfluxDB Dashboard](https://canlogger1000.csselectronics.com/img/CAN-Bus-Telematics-Dashboard-InfluxDB-Grafana.png)
 
@@ -115,7 +115,7 @@ Note: You may want to modify other variables like adding signal filters, changin
 
 ### 3: Automate & scale (e.g. via AWS Lambda)
 
-Once you've verified that your data is uploaded correctly, you can move on to automating it. See the [CANedge intro](https://canlogger.csselectronics.com/canedge-getting-started/log-file-tools/browser-dashboards) for details.
+Once you've verified that your data is uploaded correctly, you can move on to automating it. See the [CANedge intro](https://canlogger.csselectronics.com/canedge-getting-started/ce2/log-file-tools/browser-dashboards) for details.
 
 We recommend to see the README in `deploy-aws-lambda/` of this repo for automation via AWS Lambda functions.
 
