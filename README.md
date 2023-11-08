@@ -1,4 +1,7 @@
-# CANedge InfluxDB Writer - Push CAN Bus Data to InfluxDB
+# Grafana-InfluxDB - Push CAN Bus Data to InfluxDB [LEGACY]
+
+**This project is now LEGACY and not supported - we recommend using our [Grafana-Athena](https://www.csselectronics.com/pages/telematics-dashboard-open-source) integration.**
+
 
 This project lets you DBC decode CAN data from your [CANedge](https://www.csselectronics.com/pages/can-bus-hardware-products) CAN/LIN data logger - and push the data into an InfluxDB database. From here, the data can be visualized in your own customized, open source Grafana dashboards.
 
